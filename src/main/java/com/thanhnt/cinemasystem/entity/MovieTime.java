@@ -12,15 +12,15 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "movie_screens")
+@Table(name = "movie_time")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
-public class MovieScreen extends BaseEntity implements Serializable {
+public class MovieTime extends BaseEntity implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", referencedColumnName = "id", nullable = false)
-    private Movie movieScreen;
+    private Movie movieTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinema_id", referencedColumnName = "id", nullable = false)
@@ -31,10 +31,10 @@ public class MovieScreen extends BaseEntity implements Serializable {
     private Room roomScreen;
 
     @Column(name = "showtime", nullable = false)
-    private Date showtime;
+    private Long showtime;
 
 
-    @OneToMany(mappedBy = "movieScreen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "movieTime", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<TicketOrder> orders = new ArrayList<>();
 }

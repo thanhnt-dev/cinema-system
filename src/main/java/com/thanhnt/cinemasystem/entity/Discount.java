@@ -25,11 +25,11 @@ public class Discount extends BaseEntity implements Serializable {
     private int quantity;
 
     @Column(name = "expiration_date")
-    private Date expirationDate;
+    private Long expirationDate;
 
     @Column(name = "discount_percentage", nullable = false)
     private int discountPercentage;
 
     @Column(name = "max_discount_amount", nullable = false)
-    private long maxDiscountAmount;
+    private Long maxDiscountAmount;
 }

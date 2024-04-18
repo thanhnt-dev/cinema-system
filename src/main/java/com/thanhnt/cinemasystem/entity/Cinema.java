@@ -24,12 +24,12 @@ public class Cinema extends BaseEntity implements Serializable {
     @JoinColumn(name = "province_id", referencedColumnName = "id", nullable = false)
     private Province cinemaProvince;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH},
+    @OneToOne(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    @JoinColumn(name = "disctrict_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "district_id", nullable = false, referencedColumnName = "id")
     private District districtCinema;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH},
+    @OneToOne(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     @JoinColumn(name = "ward_id", nullable = false, referencedColumnName = "id")
     private Ward wardCinema;
@@ -40,5 +40,5 @@ public class Cinema extends BaseEntity implements Serializable {
 
     @OneToMany(mappedBy = "cinemaScreen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<MovieScreen> movieScreens = new ArrayList<>();
+    private List<MovieTime> movieTimes = new ArrayList<>();
 }

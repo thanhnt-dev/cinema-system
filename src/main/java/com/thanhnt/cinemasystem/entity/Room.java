@@ -22,17 +22,18 @@ public class Room extends BaseEntity implements Serializable {
     private String room_code;
 
     @Column(name = "room_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private RoomType roomType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinemaRoom;
 
-    @OneToMany(mappedBy ="roomSeat", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy ="room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Seat> seats = new ArrayList<>();
 
     @OneToMany(mappedBy = "roomScreen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<MovieScreen> movieScreens = new ArrayList<>();
+    private List<MovieTime> movieTimes = new ArrayList<>();
 }

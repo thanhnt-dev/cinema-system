@@ -34,9 +34,9 @@ public class Seat extends BaseEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
-    private Room roomSeat;
+    private Room room;
 
-    @OneToMany(mappedBy = "seatOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "seat", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<TicketOrder> seats = new ArrayList<>();
+    private List<TicketOrder> ticketOrders = new ArrayList<>();
 }

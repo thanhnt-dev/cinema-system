@@ -30,5 +30,5 @@ public abstract class BaseEntity implements Serializable {
 
     @Column(name = "updated_at", nullable = false)
     @Builder.Default
-    private Long updateAt = Instant.now().toEpochMilli();
+    private Long updatedAt = Instant.now().toEpochMilli();
 }

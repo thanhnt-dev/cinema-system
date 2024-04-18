@@ -5,7 +5,7 @@ CREATE TABLE "users" (
                          "name" varchar(255) NOT NULL,
                          "gender" varchar(10),
                          "phone" varchar(20) UNIQUE NOT NULL,
-                         "date_of_birth" timestamp NOT NULL,
+                         "date_of_birth" bigint NOT NULL,
                          "province_id" bigint,
                          "district_id" bigint,
                          "ward_id" bigint,
@@ -44,7 +44,7 @@ CREATE TABLE "refresh_tokens" (
 
 CREATE TABLE "provinces" (
                              "id" BIGSERIAL PRIMARY KEY NOT NULL,
-                             "province_name" nvarchar(100) NOT NULL,
+                             "province_name" varchar(100) NOT NULL,
                              "is_active" boolean NOT NULL DEFAULT true,
                              "created_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
                              "updated_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
@@ -52,7 +52,7 @@ CREATE TABLE "provinces" (
 
 CREATE TABLE "districts" (
                              "id" BIGSERIAL PRIMARY KEY NOT NULL,
-                             "district_name" nvarchar(100) NOT NULL,
+                             "district_name" varchar(100) NOT NULL,
                              "province_id" bigint,
                              "is_active" boolean NOT NULL DEFAULT true,
                              "created_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
@@ -61,7 +61,7 @@ CREATE TABLE "districts" (
 
 CREATE TABLE "wards" (
                          "id" BIGSERIAL PRIMARY KEY NOT NULL,
-                         "ward_name" nvarchar(100) NOT NULL,
+                         "ward_name" varchar(100) NOT NULL,
                          "district_id" bigint,
                          "is_active" boolean NOT NULL DEFAULT true,
                          "created_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
@@ -79,11 +79,11 @@ CREATE TABLE "movie_genres" (
 CREATE TABLE "movies" (
                           "id" BIGSERIAL PRIMARY KEY NOT NULL,
                           "name" varchar(100) NOT NULL,
-                          "director" nvarchar(100) NOT NULL,
+                          "director" varchar(100) NOT NULL,
                           "casts" text NOT NULL,
-                          "premiere" datetime NOT NULL,
+                          "premiere" bigint NOT NULL,
                           "duration" int NOT NULL,
-                          "language" nvarchar(255) NOT NULL,
+                          "language" varchar(255) NOT NULL,
                           "age_rated" int NOT NULL,
                           "description" text,
                           "trailer" varchar(255),
@@ -95,7 +95,7 @@ CREATE TABLE "movies" (
 
 CREATE TABLE "cinemas" (
                            "id" BIGSERIAL PRIMARY KEY NOT NULL,
-                           "cinema_name" nvarchar(100) NOT NULL,
+                           "cinema_name" varchar(100) NOT NULL,
                            "province_id" bigint NOT NULL,
                            "district_id" bigint NOT NULL,
                            "ward_id" bigint NOT NULL,
@@ -117,21 +117,21 @@ CREATE TABLE "rooms" (
 CREATE TABLE "seats" (
                          "id" BIGSERIAL PRIMARY KEY NOT NULL,
                          "seat_code" varchar(3) NOT NULL,
-                         "seat_type" nvarchar(50) NOT NULL,
+                         "seat_type" varchar(50) NOT NULL,
                          "is_status" bool NOT NULL DEFAULT false,
                          "room_id" bigint,
-                         "price" long NOT NULL,
+                         "price" bigint NOT NULL,
                          "is_active" boolean NOT NULL DEFAULT true,
                          "created_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
                          "updated_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
-CREATE TABLE "movie_screens" (
+CREATE TABLE "movie_time" ( // movie_screens
                                  "id" BIGSERIAL PRIMARY KEY NOT NULL,
                                  "movie_id" bigint NOT NULL,
                                  "cinema_id" bigint NOT NULL,
                                  "room_id" bigint NOT NULL,
-                                 "showtime" datetime NOT NULL,
+                                 "showtime" bigint NOT NULL,
                                  "is_active" boolean NOT NULL DEFAULT true,
                                  "created_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
                                  "updated_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
@@ -152,9 +152,9 @@ CREATE TABLE "ticket_orders" (
 
 CREATE TABLE "discounts" (
                              "id" BIGSERIAL PRIMARY KEY NOT NULL,
-                             "discount_code" nvarchar(50) NOT NULL,
+                             "discount_code" varchar(50) NOT NULL,
                              "quantity" int,
-                             "expiration_date" timestamp,
+                             "expiration_date" bigint,
                              "discount_percentage" int NOT NULL,
                              "max_discount_amount" bigint NOT NULL,
                              "is_active" boolean NOT NULL DEFAULT true,
@@ -174,7 +174,7 @@ CREATE TABLE "employee_schedule" (
                                      "id" BIGSERIAL PRIMARY KEY NOT NULL,
                                      "employee_id" bigint,
                                      "cinema_id" bigint,
-                                     "work_date" datetime,
+                                     "work_date" bigint,
                                      "work_time_id" bigint,
                                      "is_active" boolean NOT NULL DEFAULT true,
                                      "created_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
@@ -188,4 +188,4 @@ CREATE TABLE "work_shifts" (
                                "is_active" boolean NOT NULL DEFAULT true,
                                "created_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
                                "updated_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
-);
+)

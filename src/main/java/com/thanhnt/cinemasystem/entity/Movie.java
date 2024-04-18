@@ -1,6 +1,5 @@
 package com.thanhnt.cinemasystem.entity;
 
-import com.thanhnt.cinemasystem.enums.Genre;
 import com.thanhnt.cinemasystem.enums.Language;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.sql.Date;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class Movie extends BaseEntity implements Serializable {
     private String cast;
 
     @Column(name = "premiere", nullable = false)
-    private Date premiere;
+    private Long premiere;
 
     @Column(name = "duration", nullable = false)
     private int duration;
@@ -53,8 +51,8 @@ public class Movie extends BaseEntity implements Serializable {
     @JoinColumn(name = "genre_id", referencedColumnName = "id")
     private MovieGenre genre;
 
-    @OneToMany(mappedBy = "movieScreen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "movieTime", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<MovieScreen> movieScreens = new ArrayList<>();
+    private List<MovieTime> movieTimes = new ArrayList<>();
 
 }

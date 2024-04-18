@@ -38,7 +38,7 @@ public class User extends BaseEntity implements Serializable {
     private String phone;
 
     @Column(name = "date_of_birth", nullable = false)
-    private Date dateOfBirth;
+    private Long dateOfBirth;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "province_id", referencedColumnName = "id")
@@ -60,7 +60,7 @@ public class User extends BaseEntity implements Serializable {
     @Builder.Default
     private List<UserRole> userRoles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userToken", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 

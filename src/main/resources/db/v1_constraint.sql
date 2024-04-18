@@ -28,15 +28,15 @@ ALTER TABLE "rooms" ADD FOREIGN KEY ("cinema_id") REFERENCES "cinemas" ("id");
 
 ALTER TABLE "seats" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
 
-ALTER TABLE "movie_screens" ADD FOREIGN KEY ("movie_id") REFERENCES "movies" ("id");
+ALTER TABLE "movie_time" ADD FOREIGN KEY ("movie_id") REFERENCES "movies" ("id");
 
-ALTER TABLE "movie_screens" ADD FOREIGN KEY ("cinema_id") REFERENCES "cinemas" ("id");
+ALTER TABLE "movie_time" ADD FOREIGN KEY ("cinema_id") REFERENCES "cinemas" ("id");
 
-ALTER TABLE "movie_screens" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
+ALTER TABLE "movie_time" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
 
 ALTER TABLE "ticket_orders" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
-ALTER TABLE "ticket_orders" ADD FOREIGN KEY ("movie_showtimes") REFERENCES "movie_screens" ("id");
+ALTER TABLE "ticket_orders" ADD FOREIGN KEY ("movie_showtimes") REFERENCES "movie_time" ("id");
 
 ALTER TABLE "ticket_orders" ADD FOREIGN KEY ("seat_id") REFERENCES "seats" ("id");
 
