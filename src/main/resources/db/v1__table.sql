@@ -118,7 +118,7 @@ CREATE TABLE "seats" (
                          "id" BIGSERIAL PRIMARY KEY NOT NULL,
                          "seat_code" varchar(3) NOT NULL,
                          "seat_type" varchar(50) NOT NULL,
-                         "is_status" bool NOT NULL DEFAULT false,
+                         "is_blocked" bool NOT NULL DEFAULT false,
                          "room_id" bigint,
                          "price" bigint NOT NULL,
                          "is_active" boolean NOT NULL DEFAULT true,
@@ -126,7 +126,7 @@ CREATE TABLE "seats" (
                          "updated_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
-CREATE TABLE "movie_time" ( // movie_screens
+CREATE TABLE "movie_time" (
                                  "id" BIGSERIAL PRIMARY KEY NOT NULL,
                                  "movie_id" bigint NOT NULL,
                                  "cinema_id" bigint NOT NULL,
@@ -155,7 +155,7 @@ CREATE TABLE "discounts" (
                              "discount_code" varchar(50) NOT NULL,
                              "quantity" int,
                              "expiration_date" bigint,
-                             "discount_percentage" int NOT NULL,
+                             "discount_percentage" double precision NOT NULL,
                              "max_discount_amount" bigint NOT NULL,
                              "is_active" boolean NOT NULL DEFAULT true,
                              "created_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),

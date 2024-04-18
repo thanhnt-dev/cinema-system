@@ -1,9 +1,14 @@
 package com.thanhnt.cinemasystem.enums;
 
 public enum Language {
-    ENGLISH,
-    VIETNAMESE;
+  ENGLISH,
+  VIETNAMESE;
 
-    public boolean isEnglish() {return Language.ENGLISH == this;}
-    public boolean isVietnamese() {return Language.VIETNAMESE == this;}
+  public boolean isEnglish() {
+    return Language.ENGLISH == this;
+  }
+
+  public boolean isVietnamese() {
+    return Language.VIETNAMESE == this;
+  }
 }
