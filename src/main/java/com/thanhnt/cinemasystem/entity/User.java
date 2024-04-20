@@ -53,9 +53,12 @@ public class User extends BaseEntity implements Serializable {
   @Builder.Default
   private boolean isFirstLogin = true;
 
-  @OneToMany(mappedBy = "userRole", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @Builder.Default
-  private List<UserRole> userRoles = new ArrayList<>();
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JoinTable(
+      name = "user_role",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private List<Role> roles = new ArrayList<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default
