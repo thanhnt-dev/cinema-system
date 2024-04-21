@@ -1,4 +1,4 @@
-package com.thanhnt.cinemasystem.responsitory;
+package com.thanhnt.cinemasystem.reponsitory;
 
 import com.thanhnt.cinemasystem.entity.Role;
 import java.util.Optional;

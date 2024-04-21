@@ -5,10 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
@@ -16,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Builder
+@Setter
 public class User extends BaseEntity implements Serializable {
 
   @Column(name = "email", nullable = false, unique = true)
@@ -27,7 +25,7 @@ public class User extends BaseEntity implements Serializable {
   @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "gender", nullable = false)
+  @Column(name = "gender")
   @Enumerated(EnumType.STRING)
   private Gender gender;
 
@@ -58,7 +56,7 @@ public class User extends BaseEntity implements Serializable {
       name = "user_role",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private List<Role> roles = new ArrayList<>();
+  private List<Role> roles;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default

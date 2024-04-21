@@ -21,20 +21,4 @@ public enum RoleUser {
     }
     return null;
   }
-
-  public boolean isAdmin() {
-    return RoleUser.ADMIN == this;
-  }
-
-  public boolean isUser() {
-    return RoleUser.USER == this;
-  }
-
-  public boolean isUserVip() {
-    return RoleUser.USERVIP == this;
-  }
-
-  public boolean isStaff() {
-    return RoleUser.STAFF == this;
-  }
 }

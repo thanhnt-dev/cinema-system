@@ -1,5 +1,6 @@
 package com.thanhnt.cinemasystem.security;
 
+import com.thanhnt.cinemasystem.service.JWTService;
 import com.thanhnt.cinemasystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,16 +15,21 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
   private final UserService userService;
+  private final JWTService jwtService;
+
+  private final String[] WHITE_LIST = {"/api/v1/account/**"};
 
   @Autowired
-  public SecurityConfig(UserService userService) {
+  public SecurityConfig(UserService userService, JWTService jwtService) {
     this.userService = userService;
+    this.jwtService = jwtService;
   }
 
   @Bean
@@ -35,12 +41,15 @@ public class SecurityConfig {
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
             request ->
-                request
-                    .requestMatchers("/api/v1/account/login")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated());
+                request.requestMatchers(WHITE_LIST).permitAll().anyRequest().authenticated());
+    http.authenticationProvider(authenticationProvider());
+    http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     return http.build();
+  }
+
+  @Bean
+  public JwtAuthenticationFilter authTokenFilter() {
+    return new JwtAuthenticationFilter(jwtService, userService);
   }
 
   @Bean

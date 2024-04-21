@@ -1,51 +1,30 @@
 package com.thanhnt.cinemasystem.controller;
 
+import com.thanhnt.cinemasystem.facade.UserFace;
 import com.thanhnt.cinemasystem.request.LoginRequest;
-import com.thanhnt.cinemasystem.responsitory.UserRepository;
-import com.thanhnt.cinemasystem.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.thanhnt.cinemasystem.request.SignupRequest;
+import com.thanhnt.cinemasystem.response.BaseResponse;
+import com.thanhnt.cinemasystem.response.LoginResponse;
+import com.thanhnt.cinemasystem.response.SignupResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/account")
+@RequiredArgsConstructor
 public class UserController {
 
-  private AuthenticationManager authenticationManager;
+  private final UserFace userFace;
 
-  private UserService userService;
-
-  @Autowired
-  public UserController(
-      AuthenticationManager authenticationManager,
-      UserService userService,
-      UserRepository userRepository,
-      PasswordEncoder passwordEncoder) {
-    this.authenticationManager = authenticationManager;
-    this.userService = userService;
+  @PostMapping("/login")
+  @ResponseStatus(HttpStatus.OK)
+  public BaseResponse<LoginResponse> login(@RequestBody LoginRequest request) {
+    return this.userFace.login(request);
   }
 
-  @PostMapping("login")
-  private ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-    try {
-      Authentication authentication =
-          authenticationManager.authenticate(
-              new UsernamePasswordAuthenticationToken(
-                  loginRequest.getEmail(), loginRequest.getPassword()));
-      SecurityContextHolder.getContext().setAuthentication(authentication);
-      return ResponseEntity.ok("Success");
-    } catch (AuthenticationException e) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
-    }
+  @PostMapping("/signup")
+  public BaseResponse<SignupResponse> signup(@RequestBody SignupRequest request) {
+    return this.userFace.signup(request);
   }
 }

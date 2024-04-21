@@ -1,6 +1,6 @@
 package com.thanhnt.cinemasystem.response;
 
-import com.thanhnt.cinemasystem.entity.Role;
+import com.thanhnt.cinemasystem.enums.RoleUser;
 import java.util.List;
 import lombok.*;
 
@@ -16,5 +16,5 @@ public class LoginResponse {
   private String phone;
   private String accessToken;
   private String refreshToken;
-  private List<Role> roleUsers;
+  private List<RoleUser> roleUsers;
 }
