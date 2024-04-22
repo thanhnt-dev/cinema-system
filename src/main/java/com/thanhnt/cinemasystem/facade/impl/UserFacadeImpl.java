@@ -5,7 +5,6 @@ import com.thanhnt.cinemasystem.entity.User;
 import com.thanhnt.cinemasystem.enums.ErrorCode;
 import com.thanhnt.cinemasystem.enums.RoleUser;
 import com.thanhnt.cinemasystem.exception.LoginException;
-import com.thanhnt.cinemasystem.exception.SignupException;
 import com.thanhnt.cinemasystem.facade.UserFacade;
 import com.thanhnt.cinemasystem.request.LoginRequest;
 import com.thanhnt.cinemasystem.request.SignupRequest;
@@ -52,8 +51,7 @@ public class UserFacadeImpl implements UserFacade {
 
   @Override
   public BaseResponse<SignupResponse> signUp(SignupRequest request) {
-    ErrorCode validationError = userService.validateSignUp(request);
-    if (validationError != null) throw new SignupException(validationError);
+    userService.validateSignUp(request);
 
     User user =
         User.builder()
@@ -64,7 +62,7 @@ public class UserFacadeImpl implements UserFacade {
             .dateOfBirth(request.getDateOfBirth())
             .build();
 
-    Role userRole = roleService.findRole(RoleUser.ROLE_USER);
+    Optional<Role> userRole = roleService.findRole(RoleUser.ROLE_USER);
 
     user.addRole(userRole);
 
@@ -91,7 +89,7 @@ public class UserFacadeImpl implements UserFacade {
 
   private SignupResponse buildSignupResponse(User user) {
     SignupResponse signupResponse = new SignupResponse();
-    signupResponse.setEmail(user.getEmail());
+    SignupResponse.builder().email(user.getEmail()).build();
     return signupResponse;
   }
 }

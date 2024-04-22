@@ -3,6 +3,7 @@ package com.thanhnt.cinemasystem.service.impl;
 import com.thanhnt.cinemasystem.entity.User;
 import com.thanhnt.cinemasystem.enums.ErrorCode;
 import com.thanhnt.cinemasystem.exception.LoginException;
+import com.thanhnt.cinemasystem.exception.SignupException;
 import com.thanhnt.cinemasystem.repository.UserRepository;
 import com.thanhnt.cinemasystem.request.SignupRequest;
 import com.thanhnt.cinemasystem.security.SecurityUserDetails;
@@ -29,19 +30,17 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public ErrorCode validateSignUp(SignupRequest signupRequest) {
+  public void validateSignUp(SignupRequest signupRequest) throws SignupException {
     boolean existPhone = userRepository.existsByPhone(signupRequest.getPhone());
     boolean existMail = userRepository.existsByEmail(signupRequest.getEmail());
 
     if (existPhone && existMail) {
-      return ErrorCode.BOTH_EXIST;
+      throw new SignupException(ErrorCode.PHONE_AND_MAIL_EXIST);
     } else if (!existPhone && existMail) {
-      return ErrorCode.EMAIL_EXIST;
-
+      throw new SignupException(ErrorCode.EMAIL_EXIST);
     } else if (existPhone && !existMail) {
-      return ErrorCode.PHONE_EXIST;
+      throw new SignupException(ErrorCode.PHONE_EXIST);
     }
-    return null;
   }
 
   @Override

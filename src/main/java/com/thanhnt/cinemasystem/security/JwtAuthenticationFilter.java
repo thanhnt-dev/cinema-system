@@ -19,7 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-  private final List<String> PUBLIC_URL = List.of("/api/v1/user/login", "/api/v1/user/signup");
+  private final List<String> PUBLIC_URL = List.of("/api/v1/users/login", "/api/v1/users/signup");
 
   private final JWTService jwtService;
   private final UserService userService;
@@ -54,9 +54,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private String getTokenFromHeader(HttpServletRequest request) {
     String headerAuth = request.getHeader("Authorization");
-    if (headerAuth != null) {
-      return headerAuth.substring(7);
-    }
+    if (headerAuth != null) return headerAuth.substring(7);
+
     return null;
   }
 }

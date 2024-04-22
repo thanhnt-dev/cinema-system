@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.*;
 
 @Entity
@@ -55,7 +56,8 @@ public class User extends BaseEntity implements Serializable {
       name = "user_role",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private List<Role> roles;
+  @Builder.Default
+  private List<Role> roles = new ArrayList<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default
@@ -65,10 +67,7 @@ public class User extends BaseEntity implements Serializable {
   @Builder.Default
   private List<TicketOrder> ticketOrders = new ArrayList<>();
 
-  public void addRole(Role role) {
-    if (this.roles == null) {
-      this.roles = new ArrayList<>();
-    }
-    this.roles.add(role);
+  public void addRole(Optional<Role> role) {
+    role.ifPresent(this.roles::add);
   }
 }

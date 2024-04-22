@@ -15,9 +15,7 @@ public enum RoleUser {
 
   public static String getRoleName(String roleName) {
     for (RoleUser role : RoleUser.values()) {
-      if (role.getRoleName().equals(roleName)) {
-        return role.getRoleName();
-      }
+      if (role.getRoleName().equals(roleName)) return role.getRoleName();
     }
     return null;
   }
