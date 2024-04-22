@@ -32,26 +32,13 @@ public class SecurityUserDetails implements UserDetails {
         .build();
   }
 
-  //  public static SecurityUserDetails build(User user) {
-  //    return SecurityUserDetails.builder()
-  //            .id(user.getId())
-  //            .email(user.getEmail())
-  //            .phone(user.getPhone())
-  //            .password(user.getPassword())
-  //            .build();
-  //  }
   public static SecurityUserDetails build(User user) {
-    try {
-      return SecurityUserDetails.builder()
-          .id(user.getId())
-          .email(user.getEmail())
-          .phone(user.getPhone())
-          .password(user.getPassword())
-          .build();
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
-    }
+    return SecurityUserDetails.builder()
+        .id(user.getId())
+        .email(user.getEmail())
+        .phone(user.getPhone())
+        .password(user.getPassword())
+        .build();
   }
 
   @Override

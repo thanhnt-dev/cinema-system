@@ -6,8 +6,8 @@ import com.thanhnt.cinemasystem.response.BaseResponse;
 import com.thanhnt.cinemasystem.response.LoginResponse;
 import com.thanhnt.cinemasystem.response.SignupResponse;
 
-public interface UserFace {
+public interface UserFacade {
   BaseResponse<LoginResponse> login(LoginRequest request);
 
-  BaseResponse<SignupResponse> signup(SignupRequest request);
+  BaseResponse<SignupResponse> signUp(SignupRequest request);
 }

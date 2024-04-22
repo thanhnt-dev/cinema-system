@@ -6,17 +6,17 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum RoleUser {
-  ADMIN("ROLE_ADMIN"),
-  USER("ROLE_USER"),
-  USERVIP("ROLE_USERVIP"),
+  ROLE_ADMIN("ROLE_ADMIN"),
+  ROLE_USER("ROLE_USER"),
+  ROLE_USER_VIP("ROLE_USER_VIP"),
   STAFF("ROLE_STAFF");
 
   private final String roleName;
 
-  public static RoleUser getRoleName(String roleName) {
+  public static String getRoleName(String roleName) {
     for (RoleUser role : RoleUser.values()) {
       if (role.getRoleName().equals(roleName)) {
-        return role;
+        return role.getRoleName();
       }
     }
     return null;

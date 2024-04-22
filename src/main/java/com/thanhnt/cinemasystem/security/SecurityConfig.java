@@ -2,7 +2,6 @@ package com.thanhnt.cinemasystem.security;
 
 import com.thanhnt.cinemasystem.service.JWTService;
 import com.thanhnt.cinemasystem.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,9 +23,8 @@ public class SecurityConfig {
   private final UserService userService;
   private final JWTService jwtService;
 
-  private final String[] WHITE_LIST = {"/api/v1/account/**"};
+  private final String[] WHITE_LIST = {"/api/v1/user/login", "/api/v1/user/signup"};
 
-  @Autowired
   public SecurityConfig(UserService userService, JWTService jwtService) {
     this.userService = userService;
     this.jwtService = jwtService;

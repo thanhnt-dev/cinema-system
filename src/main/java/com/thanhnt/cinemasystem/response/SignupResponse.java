@@ -9,5 +9,4 @@ import lombok.*;
 @Builder
 public class SignupResponse {
   private String email;
-  private String phone;
 }

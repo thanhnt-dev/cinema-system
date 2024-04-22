@@ -13,7 +13,6 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
-@Setter
 public class User extends BaseEntity implements Serializable {
 
   @Column(name = "email", nullable = false, unique = true)
@@ -65,4 +64,11 @@ public class User extends BaseEntity implements Serializable {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default
   private List<TicketOrder> ticketOrders = new ArrayList<>();
+
+  public void addRole(Role role) {
+    if (this.roles == null) {
+      this.roles = new ArrayList<>();
+    }
+    this.roles.add(role);
+  }
 }

@@ -1,6 +1,5 @@
 package com.thanhnt.cinemasystem.service.impl;
 
-import com.thanhnt.cinemasystem.response.LoginResponse;
 import com.thanhnt.cinemasystem.security.SecurityUserDetails;
 import com.thanhnt.cinemasystem.service.JWTService;
 import io.jsonwebtoken.*;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
@@ -24,23 +22,6 @@ public class JWTServiceImpl implements JWTService {
 
   @Value("${spring.jwt.refreshTokenExpirationTime}")
   private String refreshTokenExpirationTime;
-
-  @Override
-  public LoginResponse generateToken(Authentication authentication) {
-    SecurityUserDetails userDetails = (SecurityUserDetails) authentication.getPrincipal();
-    return LoginResponse.builder()
-        .accessToken(generateAccessToken(userDetails))
-        .refreshToken(generateRefreshToken(userDetails))
-        .build();
-  }
-
-  @Override
-  public LoginResponse generateToken(SecurityUserDetails securityUserDetails) {
-    return LoginResponse.builder()
-        .accessToken(generateAccessToken(securityUserDetails))
-        .refreshToken(generateRefreshToken(securityUserDetails))
-        .build();
-  }
 
   @Override
   public Boolean validateToken(String token) {
@@ -75,6 +56,7 @@ public class JWTServiceImpl implements JWTService {
         .get("username", String.class);
   }
 
+  @Override
   public String generateAccessToken(SecurityUserDetails userDetails) {
     Map<String, Object> claims = setClaims(userDetails);
     return Jwts.builder()
@@ -87,6 +69,7 @@ public class JWTServiceImpl implements JWTService {
         .compact();
   }
 
+  @Override
   public String generateRefreshToken(SecurityUserDetails userDetails) {
     Map<String, Object> claims = setClaims(userDetails);
     return Jwts.builder()

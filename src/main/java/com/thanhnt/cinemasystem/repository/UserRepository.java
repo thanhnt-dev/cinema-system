@@ -1,4 +1,4 @@
-package com.thanhnt.cinemasystem.reponsitory;
+package com.thanhnt.cinemasystem.repository;
 
 import com.thanhnt.cinemasystem.entity.User;
 import java.util.Optional;
