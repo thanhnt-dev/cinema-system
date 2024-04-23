@@ -88,8 +88,6 @@ public class UserFacadeImpl implements UserFacade {
   }
 
   private SignupResponse buildSignupResponse(User user) {
-    SignupResponse signupResponse = new SignupResponse();
-    SignupResponse.builder().email(user.getEmail()).build();
-    return signupResponse;
+    return SignupResponse.builder().email(user.getEmail()).build();
   }
 }

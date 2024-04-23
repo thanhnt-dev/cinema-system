@@ -9,7 +9,7 @@ public enum RoleUser {
   ROLE_ADMIN("ROLE_ADMIN"),
   ROLE_USER("ROLE_USER"),
   ROLE_USER_VIP("ROLE_USER_VIP"),
-  STAFF("ROLE_STAFF");
+  ROLE_STAFF("ROLE_STAFF");
 
   private final String roleName;
 
