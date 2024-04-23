@@ -6,35 +6,17 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum RoleUser {
-  ADMIN("ROLE_ADMIN"),
-  USER("ROLE_USER"),
-  USERVIP("ROLE_USERVIP"),
-  STAFF("ROLE_STAFF");
+  ROLE_ADMIN("ROLE_ADMIN"),
+  ROLE_USER("ROLE_USER"),
+  ROLE_USER_VIP("ROLE_USER_VIP"),
+  ROLE_STAFF("ROLE_STAFF");
 
   private final String roleName;
 
-  public static RoleUser getRoleName(String roleName) {
+  public static String getRoleName(String roleName) {
     for (RoleUser role : RoleUser.values()) {
-      if (role.getRoleName().equals(roleName)) {
-        return role;
-      }
+      if (role.getRoleName().equals(roleName)) return role.getRoleName();
     }
     return null;
-  }
-
-  public boolean isAdmin() {
-    return RoleUser.ADMIN == this;
-  }
-
-  public boolean isUser() {
-    return RoleUser.USER == this;
-  }
-
-  public boolean isUserVip() {
-    return RoleUser.USERVIP == this;
-  }
-
-  public boolean isStaff() {
-    return RoleUser.STAFF == this;
   }
 }
