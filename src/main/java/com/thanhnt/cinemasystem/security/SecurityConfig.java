@@ -23,7 +23,9 @@ public class SecurityConfig {
   private final UserService userService;
   private final JWTService jwtService;
 
-  private final String[] WHITE_LIST = {"/api/v1/users/login", "/api/v1/users/signup"};
+  private final String[] WHITE_LIST = {"/api/v1/users/login", "/api/v1/users/signup", "/v3/api-docs/**",
+          "/swagger-ui/**",
+          "/swagger-ui.html"};
 
   public SecurityConfig(UserService userService, JWTService jwtService) {
     this.userService = userService;
