@@ -5,6 +5,7 @@ import com.thanhnt.cinemasystem.entity.User;
 import com.thanhnt.cinemasystem.enums.ErrorCode;
 import com.thanhnt.cinemasystem.enums.RoleUser;
 import com.thanhnt.cinemasystem.exception.LoginException;
+import com.thanhnt.cinemasystem.exception.SignupException;
 import com.thanhnt.cinemasystem.facade.UserFacade;
 import com.thanhnt.cinemasystem.request.LoginRequest;
 import com.thanhnt.cinemasystem.request.SignupRequest;
@@ -62,7 +63,10 @@ public class UserFacadeImpl implements UserFacade {
             .dateOfBirth(request.getDateOfBirth())
             .build();
 
-    Optional<Role> userRole = roleService.findRole(RoleUser.ROLE_USER);
+    Role userRole =
+        roleService
+            .findRole(RoleUser.ROLE_USER)
+            .orElseThrow(() -> new SignupException(ErrorCode.ROLE_NOT_FOUND));
 
     user.addRole(userRole);
 
