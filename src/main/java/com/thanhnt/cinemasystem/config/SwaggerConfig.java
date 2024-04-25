@@ -12,20 +12,20 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(info = @Info(title = "SYSTEM BOOKING TICKET SERVICE API"))
 @Configuration
 @SecurityScheme(
-        name = "Bearer Authentication",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        scheme = "bearer",
-        in = SecuritySchemeIn.HEADER,
-        paramName = "Authorization")
+    name = "Bearer Authentication",
+    type = SecuritySchemeType.HTTP,
+    bearerFormat = "JWT",
+    scheme = "bearer",
+    in = SecuritySchemeIn.HEADER,
+    paramName = "Authorization")
 public class SwaggerConfig {
-    @Bean
-    public GroupedOpenApi openApi() {
-        String[] paths = {"/api/**"};
-        return GroupedOpenApi.builder()
-                .group("User")
-                .packagesToScan("com.thanhnt.cinemasystem.controller")
-                .pathsToMatch(paths)
-                .build();
-    }
+  @Bean
+  public GroupedOpenApi openApi() {
+    String[] paths = {"/api/**"};
+    return GroupedOpenApi.builder()
+        .group("User")
+        .packagesToScan("com.thanhnt.cinemasystem.controller")
+        .pathsToMatch(paths)
+        .build();
+  }
 }

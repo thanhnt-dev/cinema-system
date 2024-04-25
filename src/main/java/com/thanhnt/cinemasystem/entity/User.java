@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.*;
 
 @Entity
@@ -67,7 +66,7 @@ public class User extends BaseEntity implements Serializable {
   @Builder.Default
   private List<TicketOrder> ticketOrders = new ArrayList<>();
 
-  public void addRole(Optional<Role> role) {
-    role.ifPresent(this.roles::add);
+  public void addRole(Role role) {
+    roles.add(role);
   }
 }
