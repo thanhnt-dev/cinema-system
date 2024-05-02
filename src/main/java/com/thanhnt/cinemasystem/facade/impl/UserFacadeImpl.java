@@ -1,8 +1,10 @@
 package com.thanhnt.cinemasystem.facade.impl;
 
+import com.thanhnt.cinemasystem.dto.OTPMailDTO;
 import com.thanhnt.cinemasystem.entity.Role;
 import com.thanhnt.cinemasystem.entity.User;
 import com.thanhnt.cinemasystem.enums.ErrorCode;
+import com.thanhnt.cinemasystem.enums.OTPType;
 import com.thanhnt.cinemasystem.enums.RoleUser;
 import com.thanhnt.cinemasystem.exception.LoginException;
 import com.thanhnt.cinemasystem.exception.SignupException;
@@ -13,10 +15,9 @@ import com.thanhnt.cinemasystem.response.BaseResponse;
 import com.thanhnt.cinemasystem.response.LoginResponse;
 import com.thanhnt.cinemasystem.response.SignupResponse;
 import com.thanhnt.cinemasystem.security.SecurityUserDetails;
-import com.thanhnt.cinemasystem.service.JWTService;
-import com.thanhnt.cinemasystem.service.RoleService;
-import com.thanhnt.cinemasystem.service.UserService;
+import com.thanhnt.cinemasystem.service.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +35,8 @@ public class UserFacadeImpl implements UserFacade {
   private final JWTService jwtService;
   private final PasswordEncoder passwordEncoder;
   private final RoleService roleService;
+  private final CacheService cacheService;
+  private final UserMailQueueProducer userMailQueueProducer;
 
   @Override
   public BaseResponse<LoginResponse> login(LoginRequest request) {
@@ -70,6 +73,8 @@ public class UserFacadeImpl implements UserFacade {
 
     user.addRole(userRole);
 
+    sendOTP(user.getEmail(), OTPType.REGISTER);
+
     userService.signup(user);
     return BaseResponse.build(buildSignupResponse(user), true);
   }
@@ -93,5 +98,22 @@ public class UserFacadeImpl implements UserFacade {
 
   private SignupResponse buildSignupResponse(User user) {
     return SignupResponse.builder().email(user.getEmail()).build();
+  }
+
+  private String generateOtp() {
+    Random random = new Random();
+    int otp = random.nextInt(999999);
+    return String.format("%06d", otp);
+  }
+
+  private void sendOTP(String recieverMail, OTPType otpType) {
+    String otp = generateOtp();
+    String cachKey =
+        otpType.isRegister()
+            ? String.format("%s-%s", "Register", recieverMail)
+            : String.format("%s-%s", "ForgetPassword", recieverMail);
+    cacheService.store(cachKey, otp, 1, TimeUnit.MINUTES);
+    userMailQueueProducer.sendMailMessage(
+        OTPMailDTO.builder().receiverMail(recieverMail).otpCode(otp).type(otpType).build());
   }
 }
