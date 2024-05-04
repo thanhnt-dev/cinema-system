@@ -1,7 +1,7 @@
 package com.thanhnt.cinemasystem.service;
 
-import com.thanhnt.cinemasystem.dto.OTPMailDTO;
+import com.thanhnt.cinemasystem.dto.OtpMailDTO;
 
 public interface MailService {
-  void sendMail(OTPMailDTO otpMailDTO);
+  void sendMail(OtpMailDTO otpMailDTO);
 }

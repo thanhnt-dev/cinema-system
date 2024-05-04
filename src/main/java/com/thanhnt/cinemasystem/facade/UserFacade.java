@@ -12,5 +12,5 @@ public interface UserFacade {
 
   BaseResponse<SignupResponse> signUp(SignupRequest request);
 
-  void ConfirmOTP(ConfirmOTPRequest confirmOTPRequest);
+  void confirmOTP(ConfirmOTPRequest confirmOTPRequest);
 }

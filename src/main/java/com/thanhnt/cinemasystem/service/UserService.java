@@ -12,5 +12,5 @@ public interface UserService extends UserDetailsService {
 
   void signup(User user);
 
-  void save(User user);
+  void saveUser(User user);
 }

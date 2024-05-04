@@ -43,7 +43,7 @@ public class UserController {
       tags = {"USER APIs"},
       summary = "User Signup")
   public BaseResponse<Void> confirmOTP(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
-    this.userFacade.ConfirmOTP(confirmOTPRequest);
+    this.userFacade.confirmOTP(confirmOTPRequest);
     return BaseResponse.ok();
   }
 }

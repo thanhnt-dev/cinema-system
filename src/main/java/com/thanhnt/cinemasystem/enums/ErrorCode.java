@@ -19,12 +19,12 @@ public enum ErrorCode {
   EMAIL_EXIST("1101", "Email already exists"),
   PHONE_EXIST("1102", "Phone number already exists"),
 
-  // Login exceptioin
+  // Login exception
   USER_IS_DEACTIVATED("1200", "Your account is deactivated"),
   BAD_CREDENTIAL_LOGIN("1201", "Invalid username or password"),
 
   // OTP exception
-  OTP_INVALID_OR_EXPIRED("1300", "Your Code is not exist"),
+  OTP_INVALID_OR_EXPIRED("1300", "Your Code invalid or expired"),
   OTP_NOT_MATCH("1301", "Your Code does not match");
 
   private final String code;

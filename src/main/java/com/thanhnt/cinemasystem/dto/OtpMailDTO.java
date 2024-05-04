@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class OTPMailDTO {
+public class OtpMailDTO {
   private String receiverMail;
   private String otpCode;
   private OTPType type;
