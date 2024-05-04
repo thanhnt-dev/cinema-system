@@ -7,8 +7,10 @@ import com.thanhnt.cinemasystem.enums.ErrorCode;
 import com.thanhnt.cinemasystem.enums.OTPType;
 import com.thanhnt.cinemasystem.enums.RoleUser;
 import com.thanhnt.cinemasystem.exception.LoginException;
+import com.thanhnt.cinemasystem.exception.OTPException;
 import com.thanhnt.cinemasystem.exception.SignupException;
 import com.thanhnt.cinemasystem.facade.UserFacade;
+import com.thanhnt.cinemasystem.request.ConfirmOTPRequest;
 import com.thanhnt.cinemasystem.request.LoginRequest;
 import com.thanhnt.cinemasystem.request.SignupRequest;
 import com.thanhnt.cinemasystem.response.BaseResponse;
@@ -36,7 +38,7 @@ public class UserFacadeImpl implements UserFacade {
   private final PasswordEncoder passwordEncoder;
   private final RoleService roleService;
   private final CacheService cacheService;
-  private final UserMailQueueProducer userMailQueueProducer;
+  private final MailQueueProducer mailQueueProducer;
 
   @Override
   public BaseResponse<LoginResponse> login(LoginRequest request) {
@@ -72,11 +74,36 @@ public class UserFacadeImpl implements UserFacade {
             .orElseThrow(() -> new SignupException(ErrorCode.ROLE_NOT_FOUND));
 
     user.addRole(userRole);
-
-    sendOTP(user.getEmail(), OTPType.REGISTER);
-
+    if (user.isFirstLogin()) {
+      sendOTP(user.getEmail(), OTPType.REGISTER);
+    }
     userService.signup(user);
     return BaseResponse.build(buildSignupResponse(user), true);
+  }
+
+  @Override
+  public void ConfirmOTP(ConfirmOTPRequest confirmOTPRequest) {
+    String cacheKey =
+        confirmOTPRequest.getOtpType().isRegister()
+            ? String.format("%s-%s", "Register", confirmOTPRequest.getEmail())
+            : String.format("%s-%s", "ForgetPassword", confirmOTPRequest.getEmail());
+    String cacheOTP = (String) cacheService.retrieve(cacheKey);
+    if (null == cacheOTP) {
+      throw new OTPException(ErrorCode.OTP_INVALID_OR_EXPIRED);
+    }
+    if (!cacheOTP.equals(confirmOTPRequest.getOtpCode())) {
+      throw new OTPException(ErrorCode.OTP_NOT_MATCH);
+    }
+
+    cacheService.delete(cacheKey);
+    if (confirmOTPRequest.getOtpType().isRegister()) {
+      User user =
+          userService
+              .findByEmail(confirmOTPRequest.getEmail())
+              .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
+      user.isLoggedIn();
+      userService.save(user);
+    }
   }
 
   private LoginResponse buildLoginResponse(SecurityUserDetails userDetails, User user) {
@@ -112,8 +139,8 @@ public class UserFacadeImpl implements UserFacade {
         otpType.isRegister()
             ? String.format("%s-%s", "Register", recieverMail)
             : String.format("%s-%s", "ForgetPassword", recieverMail);
-    cacheService.store(cachKey, otp, 1, TimeUnit.MINUTES);
-    userMailQueueProducer.sendMailMessage(
+    cacheService.store(cachKey, otp, 5, TimeUnit.MINUTES);
+    mailQueueProducer.sendMailMessage(
         OTPMailDTO.builder().receiverMail(recieverMail).otpCode(otp).type(otpType).build());
   }
 }

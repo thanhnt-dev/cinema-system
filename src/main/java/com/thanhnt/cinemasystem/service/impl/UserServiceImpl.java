@@ -31,16 +31,14 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void validateSignUp(SignupRequest signupRequest) throws SignupException {
-    boolean existPhone = userRepository.existsByPhone(signupRequest.getPhone());
-    boolean existMail = userRepository.existsByEmail(signupRequest.getEmail());
+    boolean isExistsByPhoneNumber = userRepository.existsByPhone(signupRequest.getPhone());
+    boolean isExistsByEmail = userRepository.existsByEmail(signupRequest.getEmail());
 
-    if (existPhone && existMail) {
-      throw new SignupException(ErrorCode.PHONE_AND_MAIL_EXIST);
-    } else if (!existPhone && existMail) {
-      throw new SignupException(ErrorCode.EMAIL_EXIST);
-    } else if (existPhone && !existMail) {
-      throw new SignupException(ErrorCode.PHONE_EXIST);
-    }
+    boolean isPhoneAndEmailExisted = isExistsByPhoneNumber && isExistsByEmail;
+
+    if (isPhoneAndEmailExisted) throw new SignupException(ErrorCode.PHONE_AND_MAIL_EXIST);
+    if (isExistsByEmail) throw new SignupException(ErrorCode.EMAIL_EXIST);
+    if (isExistsByPhoneNumber) throw new SignupException(ErrorCode.PHONE_EXIST);
   }
 
   @Override
@@ -62,5 +60,10 @@ public class UserServiceImpl implements UserService {
             .collect(Collectors.toList());
 
     return SecurityUserDetails.build(user, authorityList);
+  }
+
+  @Override
+  public void save(User user) {
+    userRepository.save(user);
   }
 }

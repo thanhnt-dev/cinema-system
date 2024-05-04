@@ -21,7 +21,11 @@ public enum ErrorCode {
 
   // Login exceptioin
   USER_IS_DEACTIVATED("1200", "Your account is deactivated"),
-  BAD_CREDENTIAL_LOGIN("1201", "Invalid username or password");
+  BAD_CREDENTIAL_LOGIN("1201", "Invalid username or password"),
+
+  // OTP exception
+  OTP_INVALID_OR_EXPIRED("1300", "Your Code is not exist"),
+  OTP_NOT_MATCH("1301", "Your Code does not match");
 
   private final String code;
   private final String message;

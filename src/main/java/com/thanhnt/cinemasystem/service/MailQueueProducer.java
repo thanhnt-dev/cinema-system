@@ -2,6 +2,6 @@ package com.thanhnt.cinemasystem.service;
 
 import com.thanhnt.cinemasystem.dto.OTPMailDTO;
 
-public interface UserMailQueueProducer {
+public interface MailQueueProducer {
   void sendMailMessage(OTPMailDTO mailInfo);
 }

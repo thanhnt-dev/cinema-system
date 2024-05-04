@@ -69,4 +69,8 @@ public class User extends BaseEntity implements Serializable {
   public void addRole(Role role) {
     roles.add(role);
   }
+
+  public void isLoggedIn() {
+    this.isFirstLogin = false;
+  }
 }

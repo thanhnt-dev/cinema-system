@@ -23,12 +23,10 @@ public class SecurityConfig {
   private final UserService userService;
   private final JWTService jwtService;
 
-  private final String[] WHITE_LIST = {
-    "/api/v1/users/login",
-    "/api/v1/users/signup",
-    "/v3/api-docs/**",
-    "/swagger-ui/**",
-    "/swagger-ui.html"
+  private final String[] WHITE_LIST = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
+
+  private final String[] PUBLIC_LIST = {
+    "/api/v1/users/login", "/api/v1/users/signup", "/api/v1/users/confirm-otp"
   };
 
   public SecurityConfig(UserService userService, JWTService jwtService) {
@@ -45,7 +43,13 @@ public class SecurityConfig {
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
             request ->
-                request.requestMatchers(WHITE_LIST).permitAll().anyRequest().authenticated());
+                request
+                    .requestMatchers(WHITE_LIST)
+                    .permitAll()
+                    .requestMatchers(PUBLIC_LIST)
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated());
     http.authenticationProvider(authenticationProvider());
     http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     return http.build();

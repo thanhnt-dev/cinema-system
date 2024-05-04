@@ -1,9 +1,9 @@
 server:
   port: 8080
 rabbitmq:
-  name: userMailQueue
-  exchangeName: userMailExchange
-  userMailRoutingKey: userMailRoutingKey
+  name: mailQueue
+  exchangeName: mailExchange
+  mailRoutingKey: mailRoutingKey
 
 
 spring:
@@ -28,5 +28,22 @@ spring:
     port: 5672
     username: guest
     password: guest
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tanthanh.060918@gmail.com
+    password: zgcu qqpg bmyn jzjl
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 

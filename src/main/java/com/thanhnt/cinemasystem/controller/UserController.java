@@ -1,6 +1,7 @@
 package com.thanhnt.cinemasystem.controller;
 
 import com.thanhnt.cinemasystem.facade.UserFacade;
+import com.thanhnt.cinemasystem.request.ConfirmOTPRequest;
 import com.thanhnt.cinemasystem.request.LoginRequest;
 import com.thanhnt.cinemasystem.request.SignupRequest;
 import com.thanhnt.cinemasystem.response.BaseResponse;
@@ -34,5 +35,15 @@ public class UserController {
       summary = "User Signup")
   public BaseResponse<SignupResponse> signup(@RequestBody SignupRequest request) {
     return this.userFacade.signUp(request);
+  }
+
+  @PostMapping("/confirm-otp")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      tags = {"USER APIs"},
+      summary = "User Signup")
+  public BaseResponse<Void> confirmOTP(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
+    this.userFacade.ConfirmOTP(confirmOTPRequest);
+    return BaseResponse.ok();
   }
 }

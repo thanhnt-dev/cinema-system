@@ -1,5 +1,6 @@
 package com.thanhnt.cinemasystem.facade;
 
+import com.thanhnt.cinemasystem.request.ConfirmOTPRequest;
 import com.thanhnt.cinemasystem.request.LoginRequest;
 import com.thanhnt.cinemasystem.request.SignupRequest;
 import com.thanhnt.cinemasystem.response.BaseResponse;
@@ -10,4 +11,6 @@ public interface UserFacade {
   BaseResponse<LoginResponse> login(LoginRequest request);
 
   BaseResponse<SignupResponse> signUp(SignupRequest request);
+
+  void ConfirmOTP(ConfirmOTPRequest confirmOTPRequest);
 }
