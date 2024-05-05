@@ -15,6 +15,7 @@ public class MailQueueConsumerImpl implements MailQueueConsumer {
   private final MailService mailService;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MailQueueConsumerImpl.class);
+
   @Override
   @RabbitListener(queues = {"${rabbitmq.name}"})
   public void consumeOTPMailMessage(OtpMailDTO otpMailDTO) {

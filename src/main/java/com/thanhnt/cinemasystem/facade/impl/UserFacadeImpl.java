@@ -40,7 +40,6 @@ public class UserFacadeImpl implements UserFacade {
   private final RoleService roleService;
   private final CacheService cacheService;
 
-
   @Override
   public BaseResponse<LoginResponse> login(LoginRequest request) {
     Authentication authentication =
@@ -88,12 +87,9 @@ public class UserFacadeImpl implements UserFacade {
             ? String.format("%s-%s", "Register", confirmOTPRequest.getEmail())
             : String.format("%s-%s", "ForgetPassword", confirmOTPRequest.getEmail());
     String cachedValue = (String) cacheService.retrieve(cacheKey);
-    if (null == cachedValue)
-      throw new OTPException(ErrorCode.OTP_INVALID_OR_EXPIRED);
+    if (null == cachedValue) throw new OTPException(ErrorCode.OTP_INVALID_OR_EXPIRED);
     boolean isValidOTP = cachedValue.equals(confirmOTPRequest.getOtpCode());
-    if (!isValidOTP)
-      throw new OTPException(ErrorCode.OTP_NOT_MATCH);
-
+    if (!isValidOTP) throw new OTPException(ErrorCode.OTP_NOT_MATCH);
 
     cacheService.delete(cacheKey);
     if (confirmOTPRequest.getOtpType().isRegister()) {
@@ -141,6 +137,10 @@ public class UserFacadeImpl implements UserFacade {
             : String.format("%s-%s", "ForgetPassword", receiverMail);
     cacheService.store(cacheKey, otp, 5, TimeUnit.MINUTES);
     mailQueueProducer.sendMailMessage(
-        OtpMailDTO.builder().receiverMail(receiverMail).otpCode(otp).type(OTPType.REGISTER).build());
+        OtpMailDTO.builder()
+            .receiverMail(receiverMail)
+            .otpCode(otp)
+            .type(OTPType.REGISTER)
+            .build());
   }
 }

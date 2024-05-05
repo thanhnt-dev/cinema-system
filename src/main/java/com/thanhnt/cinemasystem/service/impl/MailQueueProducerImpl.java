@@ -21,6 +21,7 @@ public class MailQueueProducerImpl implements MailQueueProducer {
   private String messageRoutingKey;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MailQueueProducerImpl.class);
+
   @Override
   public void sendMailMessage(OtpMailDTO mailInfo) {
     LOGGER.info("Sending mail message to queue: ");

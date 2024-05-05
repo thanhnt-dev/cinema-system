@@ -2,7 +2,6 @@ package com.thanhnt.cinemasystem.service.impl;
 
 import com.thanhnt.cinemasystem.dto.OtpMailDTO;
 import com.thanhnt.cinemasystem.service.MailService;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,8 +20,7 @@ public class MailServiceImpl implements MailService {
     SimpleMailMessage mailMessage = new SimpleMailMessage();
     mailMessage.setTo(otpMailDTO.getReceiverMail());
     mailMessage.setSubject(subject);
-    mailMessage.setText(
-        String.format("Hello! This is your OTP code: %s", otpMailDTO.getOtpCode()));
+    mailMessage.setText(String.format("Hello! This is your OTP code: %s", otpMailDTO.getOtpCode()));
     javaMailSender.send(mailMessage);
   }
 }
