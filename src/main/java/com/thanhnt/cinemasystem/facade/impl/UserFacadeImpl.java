@@ -12,6 +12,7 @@ import com.thanhnt.cinemasystem.exception.SignupException;
 import com.thanhnt.cinemasystem.facade.UserFacade;
 import com.thanhnt.cinemasystem.request.ConfirmOTPRequest;
 import com.thanhnt.cinemasystem.request.LoginRequest;
+import com.thanhnt.cinemasystem.request.OtpMailRequest;
 import com.thanhnt.cinemasystem.request.SignupRequest;
 import com.thanhnt.cinemasystem.response.BaseResponse;
 import com.thanhnt.cinemasystem.response.LoginResponse;
@@ -74,7 +75,7 @@ public class UserFacadeImpl implements UserFacade {
             .orElseThrow(() -> new SignupException(ErrorCode.ROLE_NOT_FOUND));
 
     user.addRole(userRole);
-    if (user.isFirstLogin()) sendOTP(user.getEmail());
+    if (user.isFirstLogin()) sendOTP(user.getEmail(), OTPType.REGISTER);
 
     userService.signup(user);
     return BaseResponse.build(buildSignupResponse(user), true);
@@ -100,6 +101,11 @@ public class UserFacadeImpl implements UserFacade {
       user.isLoggedIn();
       userService.saveUser(user);
     }
+  }
+
+  @Override
+  public void resendOTP(OtpMailRequest otpMailRequest) {
+    sendOTP(otpMailRequest.getEmail(), otpMailRequest.getOtpType());
   }
 
   private LoginResponse buildLoginResponse(SecurityUserDetails userDetails, User user) {
@@ -129,12 +135,12 @@ public class UserFacadeImpl implements UserFacade {
     return String.format("%06d", otp);
   }
 
-  private void sendOTP(String receiverMail) {
+  private void sendOTP(String receiverMail, OTPType otpType) {
     String otp = generateOtp();
     String cacheKey =
-        OTPType.REGISTER.isRegister()
+            otpType.isRegister()
             ? String.format("%s-%s", "Register", receiverMail)
-            : String.format("%s-%s", "ForgetPassword", receiverMail);
+            : String.format("%s-%s", "ForgotPassword", receiverMail);
     cacheService.store(cacheKey, otp, 5, TimeUnit.MINUTES);
     mailQueueProducer.sendMailMessage(
         OtpMailDTO.builder()
@@ -143,4 +149,5 @@ public class UserFacadeImpl implements UserFacade {
             .type(OTPType.REGISTER)
             .build());
   }
+
 }
