@@ -23,7 +23,7 @@ public class SwaggerConfig {
   public GroupedOpenApi openApi() {
     String[] paths = {"/api/**"};
     return GroupedOpenApi.builder()
-        .group("User")
+        .group("CinemaSystem")
         .packagesToScan("com.thanhnt.cinemasystem.controller")
         .pathsToMatch(paths)
         .build();
