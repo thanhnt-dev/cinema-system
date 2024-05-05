@@ -26,7 +26,12 @@ public class SecurityConfig {
   private final String[] WHITE_LIST = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
 
   private final String[] PUBLIC_LIST = {
-    "/api/v1/users/login", "/api/v1/users/signup", "/api/v1/users/confirm-otp", "/api/v1/users/resend-otp", "/api/v1/users/forgot-password"
+    "/api/v1/users/login",
+    "/api/v1/users/signup",
+    "/api/v1/users/confirm-otp",
+    "/api/v1/users/resend-otp",
+    "/api/v1/users/forgot-password",
+    "/api/v1/users/reset-password"
   };
 
   public SecurityConfig(UserService userService, JWTService jwtService) {

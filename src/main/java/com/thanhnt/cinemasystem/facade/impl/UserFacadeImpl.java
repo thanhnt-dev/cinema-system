@@ -6,14 +6,12 @@ import com.thanhnt.cinemasystem.entity.User;
 import com.thanhnt.cinemasystem.enums.ErrorCode;
 import com.thanhnt.cinemasystem.enums.OTPType;
 import com.thanhnt.cinemasystem.enums.RoleUser;
+import com.thanhnt.cinemasystem.exception.ChangePasswordException;
 import com.thanhnt.cinemasystem.exception.LoginException;
 import com.thanhnt.cinemasystem.exception.OTPException;
 import com.thanhnt.cinemasystem.exception.SignupException;
 import com.thanhnt.cinemasystem.facade.UserFacade;
-import com.thanhnt.cinemasystem.request.ConfirmOTPRequest;
-import com.thanhnt.cinemasystem.request.LoginRequest;
-import com.thanhnt.cinemasystem.request.OtpMailRequest;
-import com.thanhnt.cinemasystem.request.SignupRequest;
+import com.thanhnt.cinemasystem.request.*;
 import com.thanhnt.cinemasystem.response.BaseResponse;
 import com.thanhnt.cinemasystem.response.LoginResponse;
 import com.thanhnt.cinemasystem.response.SignupResponse;
@@ -105,7 +103,72 @@ public class UserFacadeImpl implements UserFacade {
 
   @Override
   public void resendOTP(OtpMailRequest otpMailRequest) {
+    String cacheKey =
+        otpMailRequest.getOtpType().isRegister()
+            ? String.format("%s-%s", "Register", otpMailRequest.getEmail())
+            : String.format("%s-%s", "ForgotPassword", otpMailRequest.getEmail());
+    boolean isKeyExist = cacheService.hasKey(cacheKey);
+    if (isKeyExist) cacheService.delete(cacheKey);
     sendOTP(otpMailRequest.getEmail(), otpMailRequest.getOtpType());
+  }
+
+  @Override
+  public void forgotPassword(OtpMailRequest otpMailRequest) {
+    userService
+        .findByEmail(otpMailRequest.getEmail())
+        .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
+
+    String cacheKey =
+        otpMailRequest.getOtpType().isRegister()
+            ? String.format("%s-%s", "Register", otpMailRequest.getEmail())
+            : String.format("%s-%s", "ForgotPassword", otpMailRequest.getEmail());
+    boolean isKeyExist = cacheService.hasKey(cacheKey);
+    if (isKeyExist) cacheService.delete(cacheKey);
+    sendOTP(otpMailRequest.getEmail(), otpMailRequest.getOtpType());
+  }
+
+  @Override
+  public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
+    User user =
+        userService
+            .findByEmail(resetPasswordRequest.getEmail())
+            .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
+    boolean isValidateConfirmPassword =
+        resetPasswordRequest.getPassword().equals(resetPasswordRequest.getConfirmPassword());
+    if (!isValidateConfirmPassword)
+      throw new ChangePasswordException(ErrorCode.INVALID_CONFIRM_NEW_PASSWORD);
+
+    user.changePassword(passwordEncoder.encode(resetPasswordRequest.getPassword()));
+    userService.saveUser(user);
+  }
+
+  @Override
+  public void changePassword(ChangePasswordRequest changePasswordRequest) {
+    var userPrinciple =
+        (SecurityUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user =
+        userService
+            .findByEmail(userPrinciple.getEmail())
+            .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
+    boolean isValidatePassword =
+        passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword());
+    if (!isValidatePassword)
+      throw new ChangePasswordException(ErrorCode.CURRENT_PASSWORD_DOES_NOT_MATCH);
+
+    boolean isValidateConfirmPassword =
+        changePasswordRequest
+            .getNewPassword()
+            .equals(changePasswordRequest.getConfirmNewPassword());
+    if (!isValidateConfirmPassword)
+      throw new ChangePasswordException(ErrorCode.INVALID_CONFIRM_NEW_PASSWORD);
+
+    boolean isPasswordChanged =
+        changePasswordRequest.getOldPassword().equals(changePasswordRequest.getNewPassword());
+    if (isPasswordChanged)
+      throw new ChangePasswordException(ErrorCode.OLD_PASSWORD_EQUALS_NEW_PASSWORD);
+
+    user.changePassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+    userService.saveUser(user);
   }
 
   private LoginResponse buildLoginResponse(SecurityUserDetails userDetails, User user) {
@@ -138,7 +201,7 @@ public class UserFacadeImpl implements UserFacade {
   private void sendOTP(String receiverMail, OTPType otpType) {
     String otp = generateOtp();
     String cacheKey =
-            otpType.isRegister()
+        otpType.isRegister()
             ? String.format("%s-%s", "Register", receiverMail)
             : String.format("%s-%s", "ForgotPassword", receiverMail);
     cacheService.store(cacheKey, otp, 5, TimeUnit.MINUTES);
@@ -149,5 +212,4 @@ public class UserFacadeImpl implements UserFacade {
             .type(OTPType.REGISTER)
             .build());
   }
-
 }

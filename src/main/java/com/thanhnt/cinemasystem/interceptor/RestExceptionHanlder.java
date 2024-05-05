@@ -1,8 +1,7 @@
 package com.thanhnt.cinemasystem.interceptor;
 
 import com.thanhnt.cinemasystem.enums.ErrorCode;
-import com.thanhnt.cinemasystem.exception.LoginException;
-import com.thanhnt.cinemasystem.exception.SignupException;
+import com.thanhnt.cinemasystem.exception.*;
 import com.thanhnt.cinemasystem.response.BaseResponse;
 import com.thanhnt.cinemasystem.response.ExceptionResponse;
 import org.springframework.http.HttpStatus;
@@ -34,6 +33,50 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(
         BaseResponse.build(
             new ExceptionResponse(signupException.getErrorCode(), signupException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(OTPException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
+      OTPException otpException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(otpException.getErrorCode(), otpException.getMessage()), false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(InvalidTokenException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
+      InvalidTokenException invalidTokenException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(
+                invalidTokenException.getErrorCode(), invalidTokenException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(RoleException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
+      RoleException roleException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(roleException.getErrorCode(), roleException.getMessage()), false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(ChangePasswordException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
+      ChangePasswordException changePasswordException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(
+                changePasswordException.getErrorCode(), changePasswordException.getMessage()),
             false),
         HttpStatus.BAD_REQUEST);
   }

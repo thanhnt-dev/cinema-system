@@ -1,15 +1,12 @@
 package com.thanhnt.cinemasystem.controller;
 
-import com.thanhnt.cinemasystem.enums.OTPType;
 import com.thanhnt.cinemasystem.facade.UserFacade;
-import com.thanhnt.cinemasystem.request.ConfirmOTPRequest;
-import com.thanhnt.cinemasystem.request.OtpMailRequest;
-import com.thanhnt.cinemasystem.request.LoginRequest;
-import com.thanhnt.cinemasystem.request.SignupRequest;
+import com.thanhnt.cinemasystem.request.*;
 import com.thanhnt.cinemasystem.response.BaseResponse;
 import com.thanhnt.cinemasystem.response.LoginResponse;
 import com.thanhnt.cinemasystem.response.SignupResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +23,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "User Login")
-  public BaseResponse<LoginResponse> login(@RequestBody LoginRequest request) {
-    return this.userFacade.login(request);
+  public BaseResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    return this.userFacade.login(loginRequest);
   }
 
   @PostMapping("/signup")
@@ -35,8 +32,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "User Signup")
-  public BaseResponse<SignupResponse> signup(@RequestBody SignupRequest request) {
-    return this.userFacade.signUp(request);
+  public BaseResponse<SignupResponse> signup(@RequestBody SignupRequest signupRequest) {
+    return this.userFacade.signUp(signupRequest);
   }
 
   @PostMapping("/confirm-otp")
@@ -52,8 +49,8 @@ public class UserController {
   @PostMapping("/resend-otp")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
-          tags = {"USER APIs"},
-          summary = "User Signup")
+      tags = {"USER APIs"},
+      summary = "User Signup")
   public BaseResponse<Void> resendOTP(@RequestBody OtpMailRequest otpMailRequest) {
     this.userFacade.resendOTP(otpMailRequest);
     return BaseResponse.ok();
@@ -62,10 +59,32 @@ public class UserController {
   @PostMapping("/forgot-password")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
-          tags = {"USER APIs"},
-          summary = "User Signup")
+      tags = {"USER APIs"},
+      summary = "User Signup")
   public BaseResponse<Void> forgotPassword(@RequestBody OtpMailRequest otpMailRequest) {
-    this.userFacade.resendOTP(otpMailRequest);
+    this.userFacade.forgotPassword(otpMailRequest);
+    return BaseResponse.ok();
+  }
+
+  @PostMapping("/reset-password")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      tags = {"USER APIs"},
+      summary = "User Signup")
+  public BaseResponse<Void> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+    this.userFacade.resetPassword(resetPasswordRequest);
+    return BaseResponse.ok();
+  }
+
+  @PostMapping("/change-password")
+  @ResponseStatus(HttpStatus.OK)
+  @SecurityRequirement(name = "Bearer Authentication")
+  @Operation(
+      tags = {"USER APIs"},
+      summary = "User Signup")
+  public BaseResponse<Void> changePassword(
+      @RequestBody ChangePasswordRequest changePasswordRequest) {
+    this.userFacade.changePassword(changePasswordRequest);
     return BaseResponse.ok();
   }
 }

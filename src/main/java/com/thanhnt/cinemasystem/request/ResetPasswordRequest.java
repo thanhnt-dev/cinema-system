@@ -1,16 +1,16 @@
 package com.thanhnt.cinemasystem.request;
 
-import com.thanhnt.cinemasystem.enums.OTPType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OtpMailRequest {
+public class ResetPasswordRequest {
   private String email;
-  private OTPType otpType;
+  private String password;
+  private String confirmPassword;
 }
