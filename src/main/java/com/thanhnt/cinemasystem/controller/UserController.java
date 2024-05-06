@@ -23,8 +23,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "User Login")
-  public BaseResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-    return this.userFacade.login(loginRequest);
+  public BaseResponse<LoginResponse> login(@RequestBody LoginRequest request) {
+    return this.userFacade.login(request);
   }
 
   @PostMapping("/signup")
@@ -32,8 +32,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "User Signup")
-  public BaseResponse<SignupResponse> signup(@RequestBody SignupRequest signupRequest) {
-    return this.userFacade.signUp(signupRequest);
+  public BaseResponse<SignupResponse> signup(@RequestBody SignupRequest request) {
+    return this.userFacade.signUp(request);
   }
 
   @PostMapping("/confirm-otp")
@@ -61,8 +61,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "User Signup")
-  public BaseResponse<Void> forgotPassword(@RequestBody OtpMailRequest otpMailRequest) {
-    this.userFacade.forgotPassword(otpMailRequest);
+  public BaseResponse<Void> forgotPassword(@RequestBody OtpMailRequest request) {
+    this.userFacade.forgotPassword(request);
     return BaseResponse.ok();
   }
 
@@ -71,8 +71,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "User Signup")
-  public BaseResponse<Void> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
-    this.userFacade.resetPassword(resetPasswordRequest);
+  public BaseResponse<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
+    this.userFacade.resetPassword(request);
     return BaseResponse.ok();
   }
 
@@ -82,9 +82,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "User Signup")
-  public BaseResponse<Void> changePassword(
-      @RequestBody ChangePasswordRequest changePasswordRequest) {
-    this.userFacade.changePassword(changePasswordRequest);
+  public BaseResponse<Void> changePassword(@RequestBody ChangePasswordRequest request) {
+    this.userFacade.changePassword(request);
     return BaseResponse.ok();
   }
 }

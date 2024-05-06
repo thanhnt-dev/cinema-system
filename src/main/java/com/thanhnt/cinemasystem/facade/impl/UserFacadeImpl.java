@@ -6,10 +6,7 @@ import com.thanhnt.cinemasystem.entity.User;
 import com.thanhnt.cinemasystem.enums.ErrorCode;
 import com.thanhnt.cinemasystem.enums.OTPType;
 import com.thanhnt.cinemasystem.enums.RoleUser;
-import com.thanhnt.cinemasystem.exception.ChangePasswordException;
-import com.thanhnt.cinemasystem.exception.LoginException;
-import com.thanhnt.cinemasystem.exception.OTPException;
-import com.thanhnt.cinemasystem.exception.SignupException;
+import com.thanhnt.cinemasystem.exception.*;
 import com.thanhnt.cinemasystem.facade.UserFacade;
 import com.thanhnt.cinemasystem.request.*;
 import com.thanhnt.cinemasystem.response.BaseResponse;
@@ -45,13 +42,18 @@ public class UserFacadeImpl implements UserFacade {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
     SecurityContextHolder.getContext().setAuthentication(authentication);
-    Optional<User> user = userService.findByEmail(request.getEmail());
+    User user =
+        userService
+            .findByEmail(request.getEmail())
+            .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
 
-    boolean isActive = user.isPresent();
+    boolean isActive = user.isActive();
     if (!isActive) throw new LoginException(ErrorCode.USER_IS_DEACTIVATED);
 
+    if (user.isFirstLogin()) sendOTP(user.getEmail(), OTPType.REGISTER);
+
     SecurityUserDetails userPrinciple = (SecurityUserDetails) authentication.getPrincipal();
-    return BaseResponse.build(buildLoginResponse(userPrinciple, user.get()), true);
+    return BaseResponse.build(buildLoginResponse(userPrinciple, user), true);
   }
 
   @Override
@@ -72,9 +74,6 @@ public class UserFacadeImpl implements UserFacade {
             .findRole(RoleUser.ROLE_USER)
             .orElseThrow(() -> new SignupException(ErrorCode.ROLE_NOT_FOUND));
 
-    user.addRole(userRole);
-    if (user.isFirstLogin()) sendOTP(user.getEmail(), OTPType.REGISTER);
-
     userService.signup(user);
     return BaseResponse.build(buildSignupResponse(user), true);
   }
@@ -82,9 +81,8 @@ public class UserFacadeImpl implements UserFacade {
   @Override
   public void confirmOTP(ConfirmOTPRequest confirmOTPRequest) {
     String cacheKey =
-        confirmOTPRequest.getOtpType().isRegister()
-            ? String.format("%s-%s", "Register", confirmOTPRequest.getEmail())
-            : String.format("%s-%s", "ForgetPassword", confirmOTPRequest.getEmail());
+        String.format(
+            "%s-%s", getCacheKey(confirmOTPRequest.getOtpType()), confirmOTPRequest.getEmail());
     String cachedValue = (String) cacheService.retrieve(cacheKey);
     if (null == cachedValue) throw new OTPException(ErrorCode.OTP_INVALID_OR_EXPIRED);
     boolean isValidOTP = cachedValue.equals(confirmOTPRequest.getOtpCode());
@@ -104,9 +102,8 @@ public class UserFacadeImpl implements UserFacade {
   @Override
   public void resendOTP(OtpMailRequest otpMailRequest) {
     String cacheKey =
-        otpMailRequest.getOtpType().isRegister()
-            ? String.format("%s-%s", "Register", otpMailRequest.getEmail())
-            : String.format("%s-%s", "ForgotPassword", otpMailRequest.getEmail());
+        String.format("%s-%s", getCacheKey(otpMailRequest.getOtpType()), otpMailRequest.getEmail());
+
     boolean isKeyExist = cacheService.hasKey(cacheKey);
     if (isKeyExist) cacheService.delete(cacheKey);
     sendOTP(otpMailRequest.getEmail(), otpMailRequest.getOtpType());
@@ -119,9 +116,8 @@ public class UserFacadeImpl implements UserFacade {
         .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
 
     String cacheKey =
-        otpMailRequest.getOtpType().isRegister()
-            ? String.format("%s-%s", "Register", otpMailRequest.getEmail())
-            : String.format("%s-%s", "ForgotPassword", otpMailRequest.getEmail());
+        String.format("%s-%s", getCacheKey(otpMailRequest.getOtpType()), otpMailRequest.getEmail());
+
     boolean isKeyExist = cacheService.hasKey(cacheKey);
     if (isKeyExist) cacheService.delete(cacheKey);
     sendOTP(otpMailRequest.getEmail(), otpMailRequest.getOtpType());
@@ -133,12 +129,19 @@ public class UserFacadeImpl implements UserFacade {
         userService
             .findByEmail(resetPasswordRequest.getEmail())
             .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
-    boolean isValidateConfirmPassword =
-        resetPasswordRequest.getPassword().equals(resetPasswordRequest.getConfirmPassword());
-    if (!isValidateConfirmPassword)
+
+    boolean isCheckNullPassword =
+        resetPasswordRequest.getNewPassword() != null
+            && resetPasswordRequest.getConfirmPassword() != null;
+    if (!isCheckNullPassword)
+      throw new NullException(ErrorCode.PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST);
+
+    boolean isValidConfirmPassword =
+        resetPasswordRequest.getNewPassword().equals(resetPasswordRequest.getConfirmPassword());
+    if (!isValidConfirmPassword)
       throw new ChangePasswordException(ErrorCode.INVALID_CONFIRM_NEW_PASSWORD);
 
-    user.changePassword(passwordEncoder.encode(resetPasswordRequest.getPassword()));
+    user.changePassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
     userService.saveUser(user);
   }
 
@@ -150,21 +153,21 @@ public class UserFacadeImpl implements UserFacade {
         userService
             .findByEmail(userPrinciple.getEmail())
             .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
-    boolean isValidatePassword =
+    boolean isValidCurrentPassword =
         passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword());
-    if (!isValidatePassword)
+    if (!isValidCurrentPassword)
       throw new ChangePasswordException(ErrorCode.CURRENT_PASSWORD_DOES_NOT_MATCH);
 
-    boolean isValidateConfirmPassword =
+    boolean isValidConfirmPassword =
         changePasswordRequest
             .getNewPassword()
             .equals(changePasswordRequest.getConfirmNewPassword());
-    if (!isValidateConfirmPassword)
+    if (!isValidConfirmPassword)
       throw new ChangePasswordException(ErrorCode.INVALID_CONFIRM_NEW_PASSWORD);
 
-    boolean isPasswordChanged =
+    boolean isPasswordDifferent =
         changePasswordRequest.getOldPassword().equals(changePasswordRequest.getNewPassword());
-    if (isPasswordChanged)
+    if (isPasswordDifferent)
       throw new ChangePasswordException(ErrorCode.OLD_PASSWORD_EQUALS_NEW_PASSWORD);
 
     user.changePassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
@@ -200,10 +203,8 @@ public class UserFacadeImpl implements UserFacade {
 
   private void sendOTP(String receiverMail, OTPType otpType) {
     String otp = generateOtp();
-    String cacheKey =
-        otpType.isRegister()
-            ? String.format("%s-%s", "Register", receiverMail)
-            : String.format("%s-%s", "ForgotPassword", receiverMail);
+    String cacheKey = String.format("%s-%s", getCacheKey(otpType), receiverMail);
+
     cacheService.store(cacheKey, otp, 5, TimeUnit.MINUTES);
     mailQueueProducer.sendMailMessage(
         OtpMailDTO.builder()
@@ -211,5 +212,11 @@ public class UserFacadeImpl implements UserFacade {
             .otpCode(otp)
             .type(OTPType.REGISTER)
             .build());
+  }
+
+  private String getCacheKey(OTPType otpType) {
+    return otpType.isRegister()
+        ? String.format("%s", "Register")
+        : String.format("%s", "ForgotPassword");
   }
 }

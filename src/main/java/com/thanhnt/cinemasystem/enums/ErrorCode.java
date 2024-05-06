@@ -31,7 +31,9 @@ public enum ErrorCode {
   CURRENT_PASSWORD_DOES_NOT_MATCH("1400", "Current password is invalid"),
   INVALID_CONFIRM_NEW_PASSWORD("1401", "New password and confirm new password does not match"),
   OLD_PASSWORD_EQUALS_NEW_PASSWORD(
-      "1402", "Please choose a new password different from the old one");
+      "1402", "Please choose a new password different from the old one"),
+  PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST("1403", "Please enter password and confirm password");
+
   private final String code;
   private final String message;
 }
