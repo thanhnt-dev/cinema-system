@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -82,6 +83,7 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "User Signup")
+  @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> changePassword(@RequestBody ChangePasswordRequest request) {
     this.userFacade.changePassword(request);
     return BaseResponse.ok();

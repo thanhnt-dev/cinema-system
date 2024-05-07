@@ -73,7 +73,7 @@ public class UserFacadeImpl implements UserFacade {
         roleService
             .findRole(RoleUser.ROLE_USER)
             .orElseThrow(() -> new SignupException(ErrorCode.ROLE_NOT_FOUND));
-
+    user.addRole(userRole);
     userService.signup(user);
     return BaseResponse.build(buildSignupResponse(user), true);
   }
@@ -134,7 +134,7 @@ public class UserFacadeImpl implements UserFacade {
         resetPasswordRequest.getNewPassword() != null
             && resetPasswordRequest.getConfirmPassword() != null;
     if (!isCheckNullPassword)
-      throw new NullException(ErrorCode.PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST);
+      throw new ChangePasswordException(ErrorCode.PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST);
 
     boolean isValidConfirmPassword =
         resetPasswordRequest.getNewPassword().equals(resetPasswordRequest.getConfirmPassword());
