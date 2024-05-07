@@ -42,8 +42,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "User Signup")
-  public BaseResponse<Void> confirmOTP(@RequestBody ConfirmOTPRequest confirmOTPRequest) {
-    this.userFacade.confirmOTP(confirmOTPRequest);
+  public BaseResponse<Void> confirmOTP(@RequestBody ConfirmOTPRequest request) {
+    this.userFacade.confirmOTP(request);
     return BaseResponse.ok();
   }
 
@@ -52,8 +52,8 @@ public class UserController {
   @Operation(
       tags = {"USER APIs"},
       summary = "User Signup")
-  public BaseResponse<Void> resendOTP(@RequestBody OtpMailRequest otpMailRequest) {
-    this.userFacade.resendOTP(otpMailRequest);
+  public BaseResponse<Void> resendOTP(@RequestBody OtpMailRequest request) {
+    this.userFacade.resendOTP(request);
     return BaseResponse.ok();
   }
 

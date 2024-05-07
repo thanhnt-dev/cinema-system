@@ -47,8 +47,8 @@ public class UserFacadeImpl implements UserFacade {
             .findByEmail(request.getEmail())
             .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
 
-    boolean isActive = user.isActive();
-    if (!isActive) throw new LoginException(ErrorCode.USER_IS_DEACTIVATED);
+    boolean isNotActive = !user.isActive();
+    if (isNotActive) throw new LoginException(ErrorCode.USER_IS_DEACTIVATED);
 
     if (user.isFirstLogin()) sendOTP(user.getEmail(), OTPType.REGISTER);
 
@@ -130,10 +130,10 @@ public class UserFacadeImpl implements UserFacade {
             .findByEmail(resetPasswordRequest.getEmail())
             .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
 
-    boolean isCheckNullPassword =
-        resetPasswordRequest.getNewPassword() != null
-            && resetPasswordRequest.getConfirmPassword() != null;
-    if (!isCheckNullPassword)
+    boolean isInvalidRequest =
+        resetPasswordRequest.getNewPassword() == null
+            || resetPasswordRequest.getConfirmPassword() == null;
+    if (isInvalidRequest)
       throw new ChangePasswordException(ErrorCode.PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST);
 
     boolean isValidConfirmPassword =
