@@ -10,13 +10,13 @@ public interface UserFacade {
 
   BaseResponse<SignupResponse> signUp(SignupRequest request);
 
-  void confirmOTP(ConfirmOTPRequest confirmOTPRequest);
+  void confirmOTP(ConfirmOTPRequest request);
 
-  void resendOTP(OtpMailRequest otpMailRequest);
+  void resendOTP(OtpMailRequest request);
 
-  void forgotPassword(OtpMailRequest otpMailRequest);
+  void forgotPassword(OtpMailRequest request);
 
-  void resetPassword(ResetPasswordRequest resetPasswordRequest);
+  void resetPassword(ResetPasswordRequest request);
 
-  void changePassword(ChangePasswordRequest changePasswordRequest);
+  void changePassword(ChangePasswordRequest request);
 }
