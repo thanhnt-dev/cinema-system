@@ -22,10 +22,18 @@ public enum ErrorCode {
   // Login exception
   USER_IS_DEACTIVATED("1200", "Your account is deactivated"),
   BAD_CREDENTIAL_LOGIN("1201", "Invalid username or password"),
+  USER_NOT_LOGGIN("1202", "You need to log in to change password."),
 
   // OTP exception
   OTP_INVALID_OR_EXPIRED("1300", "Your Code invalid or expired"),
-  OTP_NOT_MATCH("1301", "Your Code does not match");
+  OTP_NOT_MATCH("1301", "Your Code does not match"),
+
+  // Password exception
+  CURRENT_PASSWORD_DOES_NOT_MATCH("1400", "Current password is invalid"),
+  INVALID_CONFIRM_NEW_PASSWORD("1401", "New password and confirm new password does not match"),
+  OLD_PASSWORD_EQUALS_NEW_PASSWORD(
+      "1402", "Please choose a new password different from the old one"),
+  PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST("1403", "Please enter password and confirm password");
 
   private final String code;
   private final String message;

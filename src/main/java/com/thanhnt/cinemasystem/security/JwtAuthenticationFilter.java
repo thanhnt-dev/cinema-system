@@ -20,7 +20,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final List<String> PUBLIC_URL =
-      List.of("/api/v1/users/login", "/api/v1/users/signup", "/api/v1/users/confirm-otp");
+      List.of(
+          "/api/v1/users/login",
+          "/api/v1/users/signup",
+          "/api/v1/users/confirm-otp",
+          "/api/v1/users/resend-otp",
+          "/api/v1/users/forgot-password",
+          "/api/v1/users/reset-password");
 
   private final JWTService jwtService;
   private final UserService userService;

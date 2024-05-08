@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConfirmOTPRequest {
+public class OtpMailRequest {
   @NotNull(message = "Email is require")
   @NotBlank(message = "Email can not be blank")
   @Pattern(
@@ -23,11 +23,11 @@ public class ConfirmOTPRequest {
   @Schema(description = "example", example = "example@email.com")
   private String email;
 
-  @NotNull(message = "OTP is require")
-  @NotBlank(message = "OTP can not be blank")
-  @Pattern(regexp = "^\\d{6}$\n", message = "The OTP format is incorrect.")
-  @Schema(description = "OTP Code", example = "123456")
-  private String otpCode;
-
+  @NotNull(message = "Password is require")
+  @NotBlank(message = "Password can not be blank")
+  @Pattern(
+      regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
+      message = "The password must be lest 8 characters, English, numbers, and special characters.")
+  @Schema(description = "password", example = "NguyenVan@123")
   private OTPType otpType;
 }

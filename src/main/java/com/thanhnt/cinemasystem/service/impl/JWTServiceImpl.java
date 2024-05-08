@@ -53,7 +53,7 @@ public class JWTServiceImpl implements JWTService {
         .setSigningKey(secretKey)
         .parseClaimsJws(token)
         .getBody()
-        .get("username", String.class);
+        .get("mail", String.class);
   }
 
   @Override

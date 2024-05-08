@@ -73,4 +73,8 @@ public class User extends BaseEntity implements Serializable {
   public void isLoggedIn() {
     this.isFirstLogin = false;
   }
+
+  public void changePassword(String password) {
+    this.password = password;
+  }
 }
