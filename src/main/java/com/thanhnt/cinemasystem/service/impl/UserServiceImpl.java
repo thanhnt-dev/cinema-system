@@ -1,10 +1,16 @@
 package com.thanhnt.cinemasystem.service.impl;
 
+import com.thanhnt.cinemasystem.entity.District;
+import com.thanhnt.cinemasystem.entity.Province;
 import com.thanhnt.cinemasystem.entity.User;
+import com.thanhnt.cinemasystem.entity.Ward;
 import com.thanhnt.cinemasystem.enums.ErrorCode;
 import com.thanhnt.cinemasystem.exception.LoginException;
 import com.thanhnt.cinemasystem.exception.SignupException;
+import com.thanhnt.cinemasystem.repository.DistrictRepository;
+import com.thanhnt.cinemasystem.repository.ProvinceRepository;
 import com.thanhnt.cinemasystem.repository.UserRepository;
+import com.thanhnt.cinemasystem.repository.WardRepository;
 import com.thanhnt.cinemasystem.request.SignupRequest;
 import com.thanhnt.cinemasystem.security.SecurityUserDetails;
 import com.thanhnt.cinemasystem.service.UserService;
@@ -23,10 +29,18 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
+  private final ProvinceRepository provinceRepository;
+  private final DistrictRepository districtRepository;
+  private final WardRepository wardRepository;
 
   @Override
   public Optional<User> findByEmail(String mail) {
     return userRepository.findByEmail(mail);
+  }
+
+  @Override
+  public Optional<User> findById(Long id) {
+    return userRepository.findById(id);
   }
 
   @Override
@@ -63,7 +77,34 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional
   public void saveUser(User user) {
     userRepository.save(user);
+  }
+
+  @Override
+  @Transactional
+  public void updateUser(User user) {
+    userRepository.save(user);
+  }
+
+  @Override
+  public Optional<Province> findProvinceById(Long id) {
+    return provinceRepository.findById(id);
+  }
+
+  @Override
+  public Optional<District> findDistrictById(Long id) {
+    return districtRepository.findById(id);
+  }
+
+  @Override
+  public Optional<Ward> findWardById(Long id) {
+    return wardRepository.findById(id);
+  }
+
+  @Override
+  public boolean existByPhone(String phone) {
+    return userRepository.existsByPhone(phone);
   }
 }

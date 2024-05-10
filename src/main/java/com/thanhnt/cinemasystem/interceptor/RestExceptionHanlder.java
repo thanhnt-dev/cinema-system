@@ -81,6 +81,18 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
         HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(UpdateUserException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
+      UpdateUserException UpdateUserException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(
+                UpdateUserException.getErrorCode(), UpdateUserException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
   @ExceptionHandler(BadCredentialsException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<BaseResponse<ExceptionResponse>> handleBadCredentialsException(

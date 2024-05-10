@@ -1,17 +1,15 @@
 package com.thanhnt.cinemasystem.facade.impl;
 
 import com.thanhnt.cinemasystem.dto.OtpMailDTO;
-import com.thanhnt.cinemasystem.entity.Role;
-import com.thanhnt.cinemasystem.entity.User;
+import com.thanhnt.cinemasystem.entity.*;
 import com.thanhnt.cinemasystem.enums.ErrorCode;
+import com.thanhnt.cinemasystem.enums.Gender;
 import com.thanhnt.cinemasystem.enums.OTPType;
 import com.thanhnt.cinemasystem.enums.RoleUser;
 import com.thanhnt.cinemasystem.exception.*;
 import com.thanhnt.cinemasystem.facade.UserFacade;
 import com.thanhnt.cinemasystem.request.*;
-import com.thanhnt.cinemasystem.response.BaseResponse;
-import com.thanhnt.cinemasystem.response.LoginResponse;
-import com.thanhnt.cinemasystem.response.SignupResponse;
+import com.thanhnt.cinemasystem.response.*;
 import com.thanhnt.cinemasystem.security.SecurityUserDetails;
 import com.thanhnt.cinemasystem.service.*;
 import java.util.*;
@@ -172,6 +170,124 @@ public class UserFacadeImpl implements UserFacade {
 
     user.changePassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
     userService.saveUser(user);
+  }
+
+  @Override
+  public BaseResponse<UserProfileResponse> getProfile() {
+    var userPrinciple =
+        (SecurityUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user =
+        userService
+            .findByEmail(userPrinciple.getEmail())
+            .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
+    ProvinceResponse provinceResponse =
+        ProvinceResponse.builder()
+            .id(user.getProvince().getId())
+            .provinceName(user.getProvince().getProvinceName())
+            .build();
+    DistrictResponse districtResponse =
+        DistrictResponse.builder()
+            .id(user.getDistrict().getId())
+            .districtName(user.getDistrict().getDistrictName())
+            .build();
+    WardResponse wardResponse =
+        WardResponse.builder()
+            .id(user.getWard().getId())
+            .wardName(user.getWard().getWardName())
+            .build();
+
+    return BaseResponse.build(
+        UserProfileResponse.builder()
+            .email(user.getEmail())
+            .name(user.getName())
+            .phone(user.getPhone())
+            .gender(user.getGender())
+            .dateOfBirth(user.getDateOfBirth())
+            .province(provinceResponse)
+            .district(districtResponse)
+            .ward(wardResponse)
+            .build(),
+        true);
+  }
+
+  @Override
+  public BaseResponse<UserProfileResponse> updateUser(UpdateUserRequest updateUserRequest) {
+    var principal =
+        (SecurityUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user =
+        this.userService
+            .findById(principal.getId())
+            .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
+    String name =
+        (updateUserRequest.getName() != null) ? updateUserRequest.getName() : user.getName();
+    Gender gender = updateUserRequest.getGender();
+    String phone =
+        (updateUserRequest.getPhone() != null) ? updateUserRequest.getPhone() : user.getPhone();
+    boolean isValidPhoneUpdate = user.getPhone().equals(updateUserRequest.getPhone());
+    if (!isValidPhoneUpdate) {
+      boolean isExistsByPhoneNumber = userService.existByPhone(updateUserRequest.getPhone());
+      if (isExistsByPhoneNumber) throw new UpdateUserException(ErrorCode.PHONE_EXIST);
+    }
+    Long dateOfBirth = updateUserRequest.getDateOfBirth();
+    Province province = null;
+    if (updateUserRequest.getProvinceID() != null) {
+      province =
+          userService
+              .findProvinceById(updateUserRequest.getProvinceID())
+              .orElseThrow(() -> new UpdateUserException(ErrorCode.PROVINCE_NOT_FOUND));
+    }
+    District district = null;
+    if (updateUserRequest.getDistrictID() != null) {
+      district =
+          userService
+              .findDistrictById(updateUserRequest.getDistrictID())
+              .orElseThrow(() -> new UpdateUserException(ErrorCode.DISTRICT_NOT_FOUND));
+    }
+    Ward ward = null;
+    if (updateUserRequest.getWardID() != null) {
+      ward =
+          userService
+              .findWardById(updateUserRequest.getWardID())
+              .orElseThrow(() -> new UpdateUserException(ErrorCode.WARD_NOT_FOUND));
+    }
+
+    user.setName(name);
+    user.setGender(gender);
+    user.setPhone(phone);
+    user.setDateOfBirth(dateOfBirth);
+    user.setProvince(province);
+    user.setDistrict(district);
+    user.setWard(ward);
+
+    userService.updateUser(user);
+
+    ProvinceResponse provinceResponse =
+        ProvinceResponse.builder()
+            .id(user.getProvince().getId())
+            .provinceName(user.getProvince().getProvinceName())
+            .build();
+    DistrictResponse districtResponse =
+        DistrictResponse.builder()
+            .id(user.getDistrict().getId())
+            .districtName(user.getDistrict().getDistrictName())
+            .build();
+    WardResponse wardResponse =
+        WardResponse.builder()
+            .id(user.getWard().getId())
+            .wardName(user.getWard().getWardName())
+            .build();
+    return BaseResponse.build(
+        UserProfileResponse.builder()
+            .email(user.getEmail())
+            .name(user.getName())
+            .phone(user.getPhone())
+            .gender(user.getGender())
+            .dateOfBirth(user.getDateOfBirth())
+            .province(provinceResponse)
+            .district(districtResponse)
+            .ward(wardResponse)
+            .build(),
+        true);
   }
 
   private LoginResponse buildLoginResponse(SecurityUserDetails userDetails, User user) {

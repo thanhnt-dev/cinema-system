@@ -13,6 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
+@Setter
 public class User extends BaseEntity implements Serializable {
 
   @Column(name = "email", nullable = false, unique = true)

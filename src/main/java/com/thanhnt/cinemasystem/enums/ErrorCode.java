@@ -33,7 +33,12 @@ public enum ErrorCode {
   INVALID_CONFIRM_NEW_PASSWORD("1401", "New password and confirm new password does not match"),
   OLD_PASSWORD_EQUALS_NEW_PASSWORD(
       "1402", "Please choose a new password different from the old one"),
-  PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST("1403", "Please enter password and confirm password");
+  PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST("1403", "Please enter password and confirm password"),
+
+  // Address exception
+  PROVINCE_NOT_FOUND("1503", "Province is not found."),
+  DISTRICT_NOT_FOUND("1504", "District is not found."),
+  WARD_NOT_FOUND("1505", "Ward is not found.");
 
   private final String code;
   private final String message;
