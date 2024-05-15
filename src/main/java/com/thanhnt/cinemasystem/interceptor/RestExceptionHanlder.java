@@ -109,12 +109,11 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
   @ExceptionHandler(ImportException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<BaseResponse<ExceptionResponse>> handleImportException(
-          ImportException importException) {
+      ImportException importException) {
     return new ResponseEntity<>(
-            BaseResponse.build(
-                    new ExceptionResponse(
-                            importException.getErrorCode(), importException.getMessage()),
-                    false),
-            HttpStatus.BAD_REQUEST);
+        BaseResponse.build(
+            new ExceptionResponse(importException.getErrorCode(), importException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
   }
 }
