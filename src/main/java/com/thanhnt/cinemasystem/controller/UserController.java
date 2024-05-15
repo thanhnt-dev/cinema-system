@@ -43,7 +43,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       tags = {"USER APIs"},
-      summary = "User Signup")
+      summary = "User confirm otp")
   public BaseResponse<Void> confirmOTP(@Valid @RequestBody ConfirmOTPRequest request) {
     this.userFacade.confirmOTP(request);
     return BaseResponse.ok();
@@ -53,7 +53,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       tags = {"USER APIs"},
-      summary = "User Signup")
+      summary = "User resend otp")
   public BaseResponse<Void> resendOTP(@Valid @RequestBody OtpMailRequest request) {
     this.userFacade.resendOTP(request);
     return BaseResponse.ok();
@@ -63,7 +63,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       tags = {"USER APIs"},
-      summary = "User Signup")
+      summary = "User forgot password")
   public BaseResponse<Void> forgotPassword(@Valid @RequestBody OtpMailRequest request) {
     this.userFacade.forgotPassword(request);
     return BaseResponse.ok();
@@ -73,7 +73,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       tags = {"USER APIs"},
-      summary = "User Signup")
+      summary = "User reset password")
   public BaseResponse<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
     this.userFacade.resetPassword(request);
     return BaseResponse.ok();
@@ -84,10 +84,22 @@ public class UserController {
   @SecurityRequirement(name = "Bearer Authentication")
   @Operation(
       tags = {"USER APIs"},
-      summary = "User Signup")
+      summary = "User change password")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
     this.userFacade.changePassword(request);
+    return BaseResponse.ok();
+  }
+
+  @PostMapping("/logout")
+  @ResponseStatus(HttpStatus.OK)
+  @SecurityRequirement(name = "Bearer Authentication")
+  @Operation(
+      tags = {"USER APIs"},
+      summary = "User logout")
+  @PreAuthorize("isAuthenticated()")
+  public BaseResponse<Void> logout() {
+    this.userFacade.logout();
     return BaseResponse.ok();
   }
 
@@ -96,7 +108,7 @@ public class UserController {
   @SecurityRequirement(name = "Bearer Authentication")
   @Operation(
       tags = {"USER APIs"},
-      summary = "User Signup")
+      summary = "User profile")
   @PreAuthorize("isAuthenticated()")
   public BaseResponse<UserProfileResponse> getProfile() {
     return this.userFacade.getProfile();
@@ -108,9 +120,9 @@ public class UserController {
   @SecurityRequirement(name = "Bearer Authentication")
   @Operation(
       tags = {"USER APIs"},
-      summary = "User Signup")
+      summary = "User update")
   public BaseResponse<UserProfileResponse> updateUser(
-      @Valid @RequestBody UpdateUserRequest updateUserRequest) {
-    return this.userFacade.updateUser(updateUserRequest);
+      @Valid @RequestBody UpdateUserRequest request) {
+    return this.userFacade.updateUser(request);
   }
 }

@@ -36,10 +36,10 @@ public enum ErrorCode {
   PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST("1403", "Please enter password and confirm password"),
 
   // Address exception
-  PROVINCE_NOT_FOUND("1503", "Province is not found."),
-  DISTRICT_NOT_FOUND("1504", "District is not found."),
-  WARD_NOT_FOUND("1505", "Ward is not found.");
-
+  PROVINCE_NOT_FOUND("1500", "Province is not found."),
+  DISTRICT_NOT_FOUND("1501", "District is not found."),
+  WARD_NOT_FOUND("1502", "Ward is not found."),
+  IMPORT_LOCATION_ERROR("1503", "Fail to parse CSV file.");
   private final String code;
   private final String message;
 }

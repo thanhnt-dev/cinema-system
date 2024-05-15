@@ -13,6 +13,8 @@ public interface UserFacade {
 
   BaseResponse<UserProfileResponse> getProfile();
 
+  BaseResponse<UserProfileResponse> updateUser(UpdateUserRequest request);
+
   void confirmOTP(ConfirmOTPRequest request);
 
   void resendOTP(OtpMailRequest request);
@@ -23,5 +25,5 @@ public interface UserFacade {
 
   void changePassword(ChangePasswordRequest request);
 
-  BaseResponse<UserProfileResponse> updateUser(UpdateUserRequest request);
+  void logout();
 }

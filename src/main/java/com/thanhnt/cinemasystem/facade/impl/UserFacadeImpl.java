@@ -30,9 +30,13 @@ public class UserFacadeImpl implements UserFacade {
   private final PasswordEncoder passwordEncoder;
   private final MailQueueProducer mailQueueProducer;
   private final UserService userService;
+  private final TokenService tokenService;
   private final JWTService jwtService;
   private final RoleService roleService;
   private final CacheService cacheService;
+  private final ProvinceService provinceService;
+  private final DistrictService districtService;
+  private final WardService wardService;
 
   @Override
   public BaseResponse<LoginResponse> login(LoginRequest request) {
@@ -174,27 +178,15 @@ public class UserFacadeImpl implements UserFacade {
 
   @Override
   public BaseResponse<UserProfileResponse> getProfile() {
-    var userPrinciple =
+    var principal =
         (SecurityUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     User user =
         userService
-            .findByEmail(userPrinciple.getEmail())
+            .findByEmail(principal.getEmail())
             .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
-    ProvinceResponse provinceResponse =
-        ProvinceResponse.builder()
-            .id(user.getProvince().getId())
-            .provinceName(user.getProvince().getProvinceName())
-            .build();
-    DistrictResponse districtResponse =
-        DistrictResponse.builder()
-            .id(user.getDistrict().getId())
-            .districtName(user.getDistrict().getDistrictName())
-            .build();
-    WardResponse wardResponse =
-        WardResponse.builder()
-            .id(user.getWard().getId())
-            .wardName(user.getWard().getWardName())
-            .build();
+    ProvinceResponse provinceResponse = provinceResponse(user);
+    DistrictResponse districtResponse = districtResponse(user);
+    WardResponse wardResponse = wardResponse(user);
 
     return BaseResponse.build(
         UserProfileResponse.builder()
@@ -218,64 +210,23 @@ public class UserFacadeImpl implements UserFacade {
         this.userService
             .findById(principal.getId())
             .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
-    String name =
-        (updateUserRequest.getName() != null) ? updateUserRequest.getName() : user.getName();
+    String name = updateUserRequest.getName();
     Gender gender = updateUserRequest.getGender();
-    String phone =
-        (updateUserRequest.getPhone() != null) ? updateUserRequest.getPhone() : user.getPhone();
-    boolean isValidPhoneUpdate = user.getPhone().equals(updateUserRequest.getPhone());
-    if (!isValidPhoneUpdate) {
+    String phone = updateUserRequest.getPhone();
+    boolean isPhoneChanged = !user.getPhone().equals(updateUserRequest.getPhone());
+    if (isPhoneChanged) {
       boolean isExistsByPhoneNumber = userService.existByPhone(updateUserRequest.getPhone());
       if (isExistsByPhoneNumber) throw new UpdateUserException(ErrorCode.PHONE_EXIST);
     }
     Long dateOfBirth = updateUserRequest.getDateOfBirth();
-    Province province = null;
-    if (updateUserRequest.getProvinceID() != null) {
-      province =
-          userService
-              .findProvinceById(updateUserRequest.getProvinceID())
-              .orElseThrow(() -> new UpdateUserException(ErrorCode.PROVINCE_NOT_FOUND));
-    }
-    District district = null;
-    if (updateUserRequest.getDistrictID() != null) {
-      district =
-          userService
-              .findDistrictById(updateUserRequest.getDistrictID())
-              .orElseThrow(() -> new UpdateUserException(ErrorCode.DISTRICT_NOT_FOUND));
-    }
-    Ward ward = null;
-    if (updateUserRequest.getWardID() != null) {
-      ward =
-          userService
-              .findWardById(updateUserRequest.getWardID())
-              .orElseThrow(() -> new UpdateUserException(ErrorCode.WARD_NOT_FOUND));
-    }
-
-    user.setName(name);
-    user.setGender(gender);
-    user.setPhone(phone);
-    user.setDateOfBirth(dateOfBirth);
-    user.setProvince(province);
-    user.setDistrict(district);
-    user.setWard(ward);
-
+    Province province = getProvince(updateUserRequest.getProvinceID());
+    District district = getDistrict(updateUserRequest.getDistrictID());
+    Ward ward = getWard(updateUserRequest.getWardID());
+    user.updateProfile(name, gender, phone, dateOfBirth, province, district, ward);
     userService.updateUser(user);
-
-    ProvinceResponse provinceResponse =
-        ProvinceResponse.builder()
-            .id(user.getProvince().getId())
-            .provinceName(user.getProvince().getProvinceName())
-            .build();
-    DistrictResponse districtResponse =
-        DistrictResponse.builder()
-            .id(user.getDistrict().getId())
-            .districtName(user.getDistrict().getDistrictName())
-            .build();
-    WardResponse wardResponse =
-        WardResponse.builder()
-            .id(user.getWard().getId())
-            .wardName(user.getWard().getWardName())
-            .build();
+    ProvinceResponse provinceResponse = provinceResponse(user);
+    DistrictResponse districtResponse = districtResponse(user);
+    WardResponse wardResponse = wardResponse(user);
     return BaseResponse.build(
         UserProfileResponse.builder()
             .email(user.getEmail())
@@ -290,12 +241,23 @@ public class UserFacadeImpl implements UserFacade {
         true);
   }
 
+  @Override
+  public void logout() {
+    var principal =
+        (SecurityUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user =
+        userService
+            .findById(principal.getId())
+            .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
+    tokenService.deleteRefreshToken(user.getId());
+  }
+
   private LoginResponse buildLoginResponse(SecurityUserDetails userDetails, User user) {
     var accessToken = jwtService.generateAccessToken(userDetails);
     var refreshToken = jwtService.generateRefreshToken(userDetails);
 
     List<RoleUser> roleUsers = user.getRoles().stream().map(Role::getName).toList();
-
+    tokenService.saveRefreshToken(refreshToken, user);
     return LoginResponse.builder()
         .id(user.getId())
         .email(user.getEmail())
@@ -334,5 +296,44 @@ public class UserFacadeImpl implements UserFacade {
     return otpType.isRegister()
         ? String.format("%s", "Register")
         : String.format("%s", "ForgotPassword");
+  }
+
+  private Province getProvince(Long id) {
+    return provinceService
+        .findProvinceById(id)
+        .orElseThrow(() -> new UpdateUserException(ErrorCode.PROVINCE_NOT_FOUND));
+  }
+
+  private ProvinceResponse provinceResponse(User user) {
+    return ProvinceResponse.builder()
+        .id(user.getProvince().getId())
+        .provinceName(user.getProvince().getProvinceName())
+        .build();
+  }
+
+  private District getDistrict(Long id) {
+    return districtService
+        .findDistrictById(id)
+        .orElseThrow(() -> new UpdateUserException(ErrorCode.DISTRICT_NOT_FOUND));
+  }
+
+  private DistrictResponse districtResponse(User user) {
+    return DistrictResponse.builder()
+        .id(user.getDistrict().getId())
+        .districtName(user.getDistrict().getDistrictName())
+        .build();
+  }
+
+  private Ward getWard(Long id) {
+    return wardService
+        .findWardById(id)
+        .orElseThrow(() -> new UpdateUserException(ErrorCode.WARD_NOT_FOUND));
+  }
+
+  private WardResponse wardResponse(User user) {
+    return WardResponse.builder()
+        .id(user.getWard().getId())
+        .wardName(user.getWard().getWardName())
+        .build();
   }
 }
