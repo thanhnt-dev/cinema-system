@@ -34,11 +34,6 @@ public class ProvinceServiceImpl implements ProvinceService {
   }
 
   @Override
-  public Province findProvinceByProvinceCode(Long code) {
-    return provinceRepository.findByProvinceCode(code);
-  }
-
-  @Override
   public void save(Province province) {
     provinceRepository.save(province);
   }

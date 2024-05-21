@@ -8,8 +8,6 @@ import java.util.Optional;
 public interface DistrictService {
   Optional<District> findDistrictById(Long id);
 
-  District findByDistrictCode(Long id);
-
   List<DistrictResponse> findByProvince(Long id);
 
   void save(District district);

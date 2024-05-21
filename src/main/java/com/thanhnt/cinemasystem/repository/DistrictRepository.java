@@ -8,6 +8,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DistrictRepository extends JpaRepository<District, Long> {
   List<District> findDistrictByProvinceId(Long provinceId);
-
-  District findByDistrictCode(Long code);
 }

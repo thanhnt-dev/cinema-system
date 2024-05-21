@@ -1,5 +1,6 @@
-package com.thanhnt.cinemasystem.dto;
+package com.thanhnt.cinemasystem.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,8 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocationCsvDTO {
-  private String provinceName;
-  private String districtName;
-  private String wardName;
+public class RefreshTokenRequest {
+  @NotNull private String refreshToken;
 }

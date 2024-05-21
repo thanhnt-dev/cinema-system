@@ -10,7 +10,5 @@ public interface ProvinceService {
 
   List<ProvinceResponse> findAllProvince();
 
-  Province findProvinceByProvinceCode(Long code);
-
   void save(Province province);
 }

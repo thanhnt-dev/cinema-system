@@ -17,7 +17,10 @@ import com.thanhnt.cinemasystem.service.DistrictService;
 import com.thanhnt.cinemasystem.service.ProvinceService;
 import com.thanhnt.cinemasystem.service.WardService;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -55,40 +58,27 @@ public class LocationFacadeImpl implements LocationFacade {
   }
 
   private List<LocationCsvDTO> getLocationFromCsv(MultipartFile file) {
-    CSVHelper<LocationCsvDTO> csvDTOCSVHelper =
+    CSVHelper<LocationCsvDTO> csvDTOHelper =
         new CSVHelper<>(
             csvRecord -> {
               String provicneName = null;
-              Long provinceId = null;
               String districtName = null;
-              Long districtId = null;
               String wardName = null;
-              Long wardId = null;
               if (!csvRecord.get(0).isBlank()) provicneName = csvRecord.get(0);
 
-              if (!csvRecord.get(1).isBlank()) provinceId = Long.valueOf(csvRecord.get(1));
+              if (!csvRecord.get(1).isBlank()) districtName = csvRecord.get(1);
 
-              if (!csvRecord.get(2).isBlank()) districtName = csvRecord.get(2);
-
-              if (!csvRecord.get(3).isBlank()) districtId = Long.valueOf(csvRecord.get(3));
-
-              if (!csvRecord.get(4).isBlank()) wardName = csvRecord.get(4);
-
-              if (!csvRecord.get(5).isBlank()) wardId = Long.valueOf(csvRecord.get(5));
+              if (!csvRecord.get(2).isBlank()) wardName = csvRecord.get(2);
 
               return LocationCsvDTO.builder()
                   .provinceName(provicneName)
-                  .provinceId(provinceId)
                   .districtName(districtName)
-                  .districtId(districtId)
                   .wardName(wardName)
-                  .wardId(wardId)
                   .build();
             });
 
     try {
-      InputStream inputStream = file.getInputStream();
-      return csvDTOCSVHelper.parceCsv(file.getInputStream());
+      return csvDTOHelper.parceCsv(file.getInputStream());
     } catch (IOException e) {
       throw new ImportException(ErrorCode.IMPORT_LOCATION_ERROR);
     }
@@ -96,58 +86,54 @@ public class LocationFacadeImpl implements LocationFacade {
 
   @SneakyThrows
   private void handleImportLocation(List<LocationCsvDTO> locationCsvDTOS) {
+    Map<Province, Map<District, List<Ward>>> mapProvince = new HashMap<>();
     for (var locationcsv : locationCsvDTOS) {
       String provinceName = locationcsv.getProvinceName();
-      Long provinceCode = locationcsv.getProvinceId();
       String districtName = locationcsv.getDistrictName();
-      Long districtCode = locationcsv.getDistrictId();
       String wardName = locationcsv.getWardName();
-      Long wardCode = locationcsv.getWardId();
 
-      if (provinceName == null
-          || provinceCode == null
-          || districtName == null
-          || districtCode == null
-          || wardName == null
-          || wardCode == null) {
+      if (provinceName == null || districtName == null || wardName == null) {
         continue;
       }
+      Province province = findProvinceByNameInMap(mapProvince, provinceName);
 
-      Province province = buildProvince(provinceCode, provinceName);
-      District district = buildDistrict(districtCode, districtName, province);
-      buildWard(wardCode, wardName, district);
+      if (province == null) {
+        province = Province.builder().provinceName(provinceName).build();
+        mapProvince.put(province, new HashMap<>());
+      }
+      ;
+
+      Map<District, List<Ward>> mapDistrict = mapProvince.get(province);
+      District district = District.builder().districtName(districtName).province(province).build();
+      mapDistrict.putIfAbsent(district, new ArrayList<>());
+
+      List<Ward> wardList = mapDistrict.get(district);
+      wardList.add(Ward.builder().wardName(wardName).district(district).build());
+    }
+
+    for (Map.Entry<Province, Map<District, List<Ward>>> provinceMap : mapProvince.entrySet()) {
+      Province province = provinceMap.getKey();
+      Map<District, List<Ward>> districtListMap = provinceMap.getValue();
+      for (Map.Entry<District, List<Ward>> districtMap : districtListMap.entrySet()) {
+        District district = districtMap.getKey();
+        List<Ward> wards = districtMap.getValue();
+
+        provinceService.save(province);
+        districtService.save(district);
+        for (Ward ward : wards) {
+          wardService.save(Ward.builder().wardName(ward.getWardName()).district(district).build());
+        }
+      }
     }
   }
 
-  private Province buildProvince(Long provinceCode, String provinceName) {
-    Province province = provinceService.findProvinceByProvinceCode(provinceCode);
-    if (province == null) {
-      province = Province.builder().provinceName(provinceName).provinceCode(provinceCode).build();
-      provinceService.save(province);
+  private Province findProvinceByNameInMap(
+      Map<Province, Map<District, List<Ward>>> map, String provinceName) {
+    for (Province province : map.keySet()) {
+      if (province.getProvinceName().equals(provinceName)) {
+        return province;
+      }
     }
-    return province;
-  }
-
-  private District buildDistrict(Long districtCode, String districtName, Province province) {
-    District district = districtService.findByDistrictCode(districtCode);
-    if (district == null) {
-      district =
-          District.builder()
-              .districtCode(districtCode)
-              .districtName(districtName)
-              .province(province)
-              .build();
-
-      districtService.save(district);
-    }
-    return district;
-  }
-
-  public void buildWard(Long wardCode, String wardName, District district) {
-    Ward ward = wardService.findWarByWardCode(wardCode);
-    if (ward == null) {
-      wardService.save(
-          Ward.builder().wardCode(wardCode).wardName(wardName).district(district).build());
-    }
+    return null;
   }
 }

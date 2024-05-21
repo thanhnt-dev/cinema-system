@@ -116,4 +116,27 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
             false),
         HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(LocationException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<BaseResponse<ExceptionResponse>> handleLocationException(
+      LocationException locationException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(locationException.getErrorCode(), locationException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(UnauthorizedException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<BaseResponse<ExceptionResponse>> handleUnauthorizedException(
+      UnauthorizedException unauthorizedException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(
+                unauthorizedException.getErrorCode(), unauthorizedException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
 }

@@ -24,7 +24,7 @@ public class SecurityConfig {
   private final JWTService jwtService;
 
   private final String[] WHITE_LIST = {
-    "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/v1/location/**"
+    "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/v1/locations/import"
   };
 
   private final String[] PUBLIC_LIST = {

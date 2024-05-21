@@ -14,13 +14,17 @@ import com.thanhnt.cinemasystem.security.SecurityUserDetails;
 import com.thanhnt.cinemasystem.service.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -81,20 +85,18 @@ public class UserFacadeImpl implements UserFacade {
   }
 
   @Override
-  public void confirmOTP(ConfirmOTPRequest confirmOTPRequest) {
-    String cacheKey =
-        String.format(
-            "%s-%s", getCacheKey(confirmOTPRequest.getOtpType()), confirmOTPRequest.getEmail());
+  public void confirmOTP(ConfirmOTPRequest request) {
+    String cacheKey = String.format("%s-%s", getCacheKey(request.getOtpType()), request.getEmail());
     String cachedValue = (String) cacheService.retrieve(cacheKey);
     if (null == cachedValue) throw new OTPException(ErrorCode.OTP_INVALID_OR_EXPIRED);
-    boolean isValidOTP = cachedValue.equals(confirmOTPRequest.getOtpCode());
+    boolean isValidOTP = cachedValue.equals(request.getOtpCode());
     if (!isValidOTP) throw new OTPException(ErrorCode.OTP_NOT_MATCH);
 
     cacheService.delete(cacheKey);
-    if (confirmOTPRequest.getOtpType().isRegister()) {
+    if (request.getOtpType().isRegister()) {
       User user =
           userService
-              .findByEmail(confirmOTPRequest.getEmail())
+              .findByEmail(request.getEmail())
               .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
       user.isLoggedIn();
       userService.saveUser(user);
@@ -102,53 +104,50 @@ public class UserFacadeImpl implements UserFacade {
   }
 
   @Override
-  public void resendOTP(OtpMailRequest otpMailRequest) {
-    String cacheKey =
-        String.format("%s-%s", getCacheKey(otpMailRequest.getOtpType()), otpMailRequest.getEmail());
+  public void resendOTP(OtpMailRequest request) {
+    String cacheKey = String.format("%s-%s", getCacheKey(request.getOtpType()), request.getEmail());
 
     boolean isKeyExist = cacheService.hasKey(cacheKey);
     if (isKeyExist) cacheService.delete(cacheKey);
-    sendOTP(otpMailRequest.getEmail(), otpMailRequest.getOtpType());
+    sendOTP(request.getEmail(), request.getOtpType());
   }
 
   @Override
-  public void forgotPassword(OtpMailRequest otpMailRequest) {
+  public void forgotPassword(OtpMailRequest request) {
     userService
-        .findByEmail(otpMailRequest.getEmail())
+        .findByEmail(request.getEmail())
         .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
 
-    String cacheKey =
-        String.format("%s-%s", getCacheKey(otpMailRequest.getOtpType()), otpMailRequest.getEmail());
+    String cacheKey = String.format("%s-%s", getCacheKey(request.getOtpType()), request.getEmail());
 
     boolean isKeyExist = cacheService.hasKey(cacheKey);
     if (isKeyExist) cacheService.delete(cacheKey);
-    sendOTP(otpMailRequest.getEmail(), otpMailRequest.getOtpType());
+    sendOTP(request.getEmail(), request.getOtpType());
   }
 
   @Override
-  public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
+  public void resetPassword(ResetPasswordRequest request) {
     User user =
         userService
-            .findByEmail(resetPasswordRequest.getEmail())
+            .findByEmail(request.getEmail())
             .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
 
     boolean isInvalidRequest =
-        resetPasswordRequest.getNewPassword() == null
-            || resetPasswordRequest.getConfirmPassword() == null;
+        request.getNewPassword() == null || request.getConfirmPassword() == null;
     if (isInvalidRequest)
       throw new ChangePasswordException(ErrorCode.PASSWORD_AND_NEW_PASSWORD_IS_NOT_EXIST);
 
-    boolean isValidConfirmPassword =
-        resetPasswordRequest.getNewPassword().equals(resetPasswordRequest.getConfirmPassword());
+    boolean isValidConfirmPassword = request.getNewPassword().equals(request.getConfirmPassword());
     if (!isValidConfirmPassword)
       throw new ChangePasswordException(ErrorCode.INVALID_CONFIRM_NEW_PASSWORD);
 
-    user.changePassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+    user.changePassword(passwordEncoder.encode(request.getNewPassword()));
     userService.saveUser(user);
   }
 
   @Override
-  public void changePassword(ChangePasswordRequest changePasswordRequest) {
+  @Transactional
+  public void changePassword(ChangePasswordRequest request) {
     var userPrinciple =
         (SecurityUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     User user =
@@ -156,23 +155,20 @@ public class UserFacadeImpl implements UserFacade {
             .findByEmail(userPrinciple.getEmail())
             .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
     boolean isValidCurrentPassword =
-        passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword());
+        passwordEncoder.matches(request.getOldPassword(), user.getPassword());
     if (!isValidCurrentPassword)
       throw new ChangePasswordException(ErrorCode.CURRENT_PASSWORD_DOES_NOT_MATCH);
 
     boolean isValidConfirmPassword =
-        changePasswordRequest
-            .getNewPassword()
-            .equals(changePasswordRequest.getConfirmNewPassword());
+        request.getNewPassword().equals(request.getConfirmNewPassword());
     if (!isValidConfirmPassword)
       throw new ChangePasswordException(ErrorCode.INVALID_CONFIRM_NEW_PASSWORD);
 
-    boolean isPasswordDifferent =
-        changePasswordRequest.getOldPassword().equals(changePasswordRequest.getNewPassword());
+    boolean isPasswordDifferent = request.getOldPassword().equals(request.getNewPassword());
     if (isPasswordDifferent)
       throw new ChangePasswordException(ErrorCode.OLD_PASSWORD_EQUALS_NEW_PASSWORD);
 
-    user.changePassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+    user.changePassword(passwordEncoder.encode(request.getNewPassword()));
     userService.saveUser(user);
   }
 
@@ -203,25 +199,26 @@ public class UserFacadeImpl implements UserFacade {
   }
 
   @Override
-  public BaseResponse<UserProfileResponse> updateUser(UpdateUserRequest updateUserRequest) {
+  @Transactional
+  public BaseResponse<UserProfileResponse> updateUser(UpdateUserRequest request) {
     var principal =
         (SecurityUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     User user =
         this.userService
             .findById(principal.getId())
             .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
-    String name = updateUserRequest.getName();
-    Gender gender = updateUserRequest.getGender();
-    String phone = updateUserRequest.getPhone();
-    boolean isPhoneChanged = !user.getPhone().equals(updateUserRequest.getPhone());
+    String name = request.getName();
+    Gender gender = request.getGender();
+    String phone = request.getPhone();
+    boolean isPhoneChanged = !user.getPhone().equals(request.getPhone());
     if (isPhoneChanged) {
-      boolean isExistsByPhoneNumber = userService.existByPhone(updateUserRequest.getPhone());
+      boolean isExistsByPhoneNumber = userService.existByPhone(request.getPhone());
       if (isExistsByPhoneNumber) throw new UpdateUserException(ErrorCode.PHONE_EXIST);
     }
-    Long dateOfBirth = updateUserRequest.getDateOfBirth();
-    Province province = getProvince(updateUserRequest.getProvinceID());
-    District district = getDistrict(updateUserRequest.getDistrictID());
-    Ward ward = getWard(updateUserRequest.getWardID());
+    Long dateOfBirth = request.getDateOfBirth();
+    Province province = getProvince(request.getProvinceID());
+    District district = getDistrict(request.getDistrictID());
+    Ward ward = getWard(request.getWardID());
     user.updateProfile(name, gender, phone, dateOfBirth, province, district, ward);
     userService.updateUser(user);
     ProvinceResponse provinceResponse = provinceResponse(user);
@@ -237,6 +234,30 @@ public class UserFacadeImpl implements UserFacade {
             .province(provinceResponse)
             .district(districtResponse)
             .ward(wardResponse)
+            .build(),
+        true);
+  }
+
+  @Override
+  public BaseResponse<NewAccessTokenResponse> refreshToken(RefreshTokenRequest request) {
+    RefreshToken refreshToken = this.tokenService.validateRefreshToken(request.getRefreshToken());
+    User user =
+        this.userService
+            .findById(refreshToken.getUser().getId())
+            .orElseThrow(() -> new LoginException(ErrorCode.USER_NOT_FOUND));
+    List<GrantedAuthority> authorityList =
+        user.getRoles().stream()
+            .map(role -> new SimpleGrantedAuthority(role.getName().toString()))
+            .collect(Collectors.toList());
+    SecurityUserDetails userDetails = SecurityUserDetails.build(user, authorityList);
+    String newAccessToken = this.jwtService.generateAccessToken(userDetails);
+    String newRefreshToken = this.jwtService.generateRefreshToken(userDetails);
+    refreshToken.updateNewRefreshToken(refreshToken.getRefreshToken());
+    tokenService.updateRefreshToken(refreshToken);
+    return BaseResponse.build(
+        NewAccessTokenResponse.builder()
+            .accessToken(newAccessToken)
+            .refreshToken(newRefreshToken)
             .build(),
         true);
   }
@@ -301,7 +322,7 @@ public class UserFacadeImpl implements UserFacade {
   private Province getProvince(Long id) {
     return provinceService
         .findProvinceById(id)
-        .orElseThrow(() -> new UpdateUserException(ErrorCode.PROVINCE_NOT_FOUND));
+        .orElseThrow(() -> new LocationException(ErrorCode.PROVINCE_NOT_FOUND));
   }
 
   private ProvinceResponse provinceResponse(User user) {
@@ -314,7 +335,7 @@ public class UserFacadeImpl implements UserFacade {
   private District getDistrict(Long id) {
     return districtService
         .findDistrictById(id)
-        .orElseThrow(() -> new UpdateUserException(ErrorCode.DISTRICT_NOT_FOUND));
+        .orElseThrow(() -> new LocationException(ErrorCode.DISTRICT_NOT_FOUND));
   }
 
   private DistrictResponse districtResponse(User user) {
@@ -327,7 +348,7 @@ public class UserFacadeImpl implements UserFacade {
   private Ward getWard(Long id) {
     return wardService
         .findWardById(id)
-        .orElseThrow(() -> new UpdateUserException(ErrorCode.WARD_NOT_FOUND));
+        .orElseThrow(() -> new LocationException(ErrorCode.WARD_NOT_FOUND));
   }
 
   private WardResponse wardResponse(User user) {

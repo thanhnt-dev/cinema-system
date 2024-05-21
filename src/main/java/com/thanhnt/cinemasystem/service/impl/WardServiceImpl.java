@@ -21,14 +21,6 @@ public class WardServiceImpl implements WardService {
   }
 
   @Override
-  public Ward findWarByWardCode(Long code) {
-    if (code == null) {
-      return null;
-    }
-    return wardRepository.findByWardCode(code);
-  }
-
-  @Override
   public List<WardResponse> findWardByDistrictId(Long id) {
     List<Ward> wards = wardRepository.findByDistrictId(id);
     return wards.stream()

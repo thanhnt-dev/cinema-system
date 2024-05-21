@@ -21,11 +21,6 @@ public class DistrictServiceImpl implements DistrictService {
   }
 
   @Override
-  public District findByDistrictCode(Long id) {
-    return districtRepository.findByDistrictCode(id);
-  }
-
-  @Override
   public List<DistrictResponse> findByProvince(Long id) {
     List<District> districts = districtRepository.findDistrictByProvinceId(id);
     return districts.stream()

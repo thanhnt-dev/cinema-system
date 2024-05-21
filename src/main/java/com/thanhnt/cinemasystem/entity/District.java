@@ -19,9 +19,6 @@ public class District extends BaseEntity implements Serializable {
   @Column(name = "district_name", nullable = false, length = 100)
   private String districtName;
 
-  @Column(name = "district_code")
-  private Long districtCode;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "province_id", referencedColumnName = "id")
   private Province province;

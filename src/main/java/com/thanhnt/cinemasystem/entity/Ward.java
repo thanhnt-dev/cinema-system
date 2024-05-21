@@ -17,9 +17,6 @@ public class Ward extends BaseEntity implements Serializable {
   @Column(name = "ward_name", nullable = false, length = 100)
   private String wardName;
 
-  @Column(name = "ward_code")
-  private Long wardCode;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "district_id", referencedColumnName = "id")
   private District district;

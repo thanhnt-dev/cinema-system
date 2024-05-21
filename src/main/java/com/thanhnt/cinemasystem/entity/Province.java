@@ -19,9 +19,6 @@ public class Province extends BaseEntity implements Serializable {
   @Column(name = "province_name", nullable = false, length = 100)
   private String provinceName;
 
-  @Column(name = "province_code")
-  private Long provinceCode;
-
   @OneToMany(mappedBy = "province", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default
   private List<District> districts = new ArrayList<>();

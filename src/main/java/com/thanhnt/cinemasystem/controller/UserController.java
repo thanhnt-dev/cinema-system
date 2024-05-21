@@ -2,10 +2,7 @@ package com.thanhnt.cinemasystem.controller;
 
 import com.thanhnt.cinemasystem.facade.UserFacade;
 import com.thanhnt.cinemasystem.request.*;
-import com.thanhnt.cinemasystem.response.BaseResponse;
-import com.thanhnt.cinemasystem.response.LoginResponse;
-import com.thanhnt.cinemasystem.response.SignupResponse;
-import com.thanhnt.cinemasystem.response.UserProfileResponse;
+import com.thanhnt.cinemasystem.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -124,5 +121,14 @@ public class UserController {
   public BaseResponse<UserProfileResponse> updateUser(
       @Valid @RequestBody UpdateUserRequest request) {
     return this.userFacade.updateUser(request);
+  }
+
+  @PostMapping("/refresh-token")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Refresh token",
+      tags = {"USER APIs"})
+  public BaseResponse<NewAccessTokenResponse> refreshToken(RefreshTokenRequest request) {
+    return this.userFacade.refreshToken(request);
   }
 }
