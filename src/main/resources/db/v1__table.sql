@@ -50,6 +50,7 @@ CREATE TABLE "provinces"
 (
     "id"            BIGSERIAL PRIMARY KEY NOT NULL,
     "province_name" varchar(100)          NOT NULL,
+    "province_code" bigint,
     "is_active"     boolean               NOT NULL DEFAULT true,
     "created_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
     "updated_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
@@ -59,6 +60,7 @@ CREATE TABLE "districts"
 (
     "id"            BIGSERIAL PRIMARY KEY NOT NULL,
     "district_name" varchar(100)          NOT NULL,
+    "district_code" bigint,
     "province_id"   bigint,
     "is_active"     boolean               NOT NULL DEFAULT true,
     "created_at"    bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
@@ -69,6 +71,7 @@ CREATE TABLE "wards"
 (
     "id"          BIGSERIAL PRIMARY KEY NOT NULL,
     "ward_name"   varchar(100)          NOT NULL,
+    "ward_code"   bigint,
     "district_id" bigint,
     "is_active"   boolean               NOT NULL DEFAULT true,
     "created_at"  bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),

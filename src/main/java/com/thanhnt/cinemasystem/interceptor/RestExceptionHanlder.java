@@ -81,6 +81,18 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
         HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(UpdateUserException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  private ResponseEntity<BaseResponse<ExceptionResponse>> handleOTPException(
+      UpdateUserException UpdateUserException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(
+                UpdateUserException.getErrorCode(), UpdateUserException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
   @ExceptionHandler(BadCredentialsException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<BaseResponse<ExceptionResponse>> handleBadCredentialsException(
@@ -90,6 +102,40 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
             new ExceptionResponse(
                 ErrorCode.BAD_CREDENTIAL_LOGIN.getCode(),
                 ErrorCode.BAD_CREDENTIAL_LOGIN.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(ImportException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<BaseResponse<ExceptionResponse>> handleImportException(
+      ImportException importException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(importException.getErrorCode(), importException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(LocationException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<BaseResponse<ExceptionResponse>> handleLocationException(
+      LocationException locationException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(locationException.getErrorCode(), locationException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(UnauthorizedException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<BaseResponse<ExceptionResponse>> handleUnauthorizedException(
+      UnauthorizedException unauthorizedException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(
+                unauthorizedException.getErrorCode(), unauthorizedException.getMessage()),
             false),
         HttpStatus.BAD_REQUEST);
   }

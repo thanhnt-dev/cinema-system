@@ -30,6 +30,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public Optional<User> findById(Long id) {
+    return userRepository.findById(id);
+  }
+
+  @Override
   public void validateSignUp(SignupRequest signupRequest) throws SignupException {
     boolean isExistsByPhoneNumber = userRepository.existsByPhone(signupRequest.getPhone());
     boolean isExistsByEmail = userRepository.existsByEmail(signupRequest.getEmail());
@@ -63,7 +68,19 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional
   public void saveUser(User user) {
     userRepository.save(user);
+  }
+
+  @Override
+  @Transactional
+  public void updateUser(User user) {
+    userRepository.save(user);
+  }
+
+  @Override
+  public boolean existByPhone(String phone) {
+    return userRepository.existsByPhone(phone);
   }
 }

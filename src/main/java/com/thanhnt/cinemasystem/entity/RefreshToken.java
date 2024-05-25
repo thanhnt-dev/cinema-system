@@ -20,4 +20,8 @@ public class RefreshToken extends BaseEntity implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private User user;
+
+  public void updateNewRefreshToken(String token) {
+    this.refreshToken = token;
+  }
 }

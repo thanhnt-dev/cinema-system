@@ -29,5 +29,7 @@ public class ConfirmOTPRequest {
   @Schema(description = "OTP Code", example = "123456")
   private String otpCode;
 
+  @NotNull(message = "Email is require")
+  @NotBlank(message = "Email can not be blank")
   private OTPType otpType;
 }

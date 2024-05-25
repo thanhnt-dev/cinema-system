@@ -19,5 +19,7 @@ public class LoginRequest {
   @Schema(description = "example", example = "example@email.com")
   private String email;
 
+  @NotNull(message = "Password is require")
+  @NotBlank(message = "Password can not be blank")
   private String password;
 }

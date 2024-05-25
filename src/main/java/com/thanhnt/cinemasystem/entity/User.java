@@ -77,4 +77,21 @@ public class User extends BaseEntity implements Serializable {
   public void changePassword(String password) {
     this.password = password;
   }
+
+  public void updateProfile(
+      String name,
+      Gender gender,
+      String phone,
+      Long dateOfBirth,
+      Province province,
+      District district,
+      Ward ward) {
+    this.name = name;
+    this.gender = gender;
+    this.phone = phone;
+    this.dateOfBirth = dateOfBirth;
+    this.province = province;
+    this.district = district;
+    this.ward = ward;
+  }
 }
