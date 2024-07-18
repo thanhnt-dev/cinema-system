@@ -20,6 +20,9 @@ public class Movie extends BaseEntity implements Serializable {
   @Column(name = "name", nullable = false, length = 100)
   private String name;
 
+  @Column(name = "image", nullable = false)
+  private String image;
+
   @Column(name = "director", nullable = false)
   private String director;
 

@@ -45,7 +45,10 @@ public enum ErrorCode {
   REFRESH_TOKEN_INVALID("1300", "Invalid refresh token"),
 
   // UNAUTHORIZE
-  API_KEY_INVALID("1350", "Invalid API key.");
+  API_KEY_INVALID("1350", "Invalid API key."),
+
+  // Movie exception
+  MOVIE_NOT_FOUND("1400", "Movie not found");
 
   private final String code;
   private final String message;
