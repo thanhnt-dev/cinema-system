@@ -16,22 +16,22 @@ import org.springframework.web.bind.annotation.*;
 public class MovieController {
   private final MovieFacade movieFacade;
 
-  @GetMapping("/showing")
+  @GetMapping("/now-showing")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       tags = {"MOVIE APIs"},
       summary = "Movie is showing")
   public BaseResponse<List<MovieResponse>> getMovieShowing() {
-    return this.movieFacade.findMovieIsShowing();
+    return this.movieFacade.getMovieIsShowing();
   }
 
-  @GetMapping("/coming")
+  @GetMapping("/up-coming")
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       tags = {"MOVIE APIs"},
       summary = "Movie is coming")
   public BaseResponse<List<MovieResponse>> getMovieComing() {
-    return this.movieFacade.findMovieIsComing();
+    return this.movieFacade.getMovieIsComing();
   }
 
   @GetMapping("/{id}")
@@ -40,7 +40,7 @@ public class MovieController {
       tags = {"MOVIE APIs"},
       summary = "Movie is coming")
   public BaseResponse<MovieDetailResponse> getMovieById(@PathVariable("id") Long id) {
-    return this.movieFacade.findMovieById(id);
+    return this.movieFacade.getMovieById(id);
   }
 
   @GetMapping("/cinema/{id}")
@@ -50,16 +50,16 @@ public class MovieController {
       summary = "Get movie information from cinema id")
   public BaseResponse<List<MovieShowingCinemaResponse>> getMovieByCinemaId(
       @PathVariable("id") Long id) {
-    return this.movieFacade.findMovieByCinemaId(id);
+    return this.movieFacade.getMovieByCinemaId(id);
   }
 
-  @GetMapping()
+  @GetMapping
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       tags = {"MOVIE APIs"},
       summary = "Get movie by criteria")
   public BaseResponse<PaginationResponse<List<MovieResponse>>> getMovie(
       @Nullable MovieCriteria criteria) {
-    return this.movieFacade.findByFilter(criteria);
+    return this.movieFacade.getByFilter(criteria);
   }
 }

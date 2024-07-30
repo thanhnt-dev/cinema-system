@@ -17,7 +17,7 @@ public class CinemaFacadeImpl implements CinemaFacade {
   @Override
   public BaseResponse<List<CinemaResponse>> getCinemaByProvince(Long provinceId) {
     List<Cinema> cinemas = cinemaService.findByProvince(provinceId);
-    List<CinemaResponse> list =
+    List<CinemaResponse> responses =
         cinemas.stream()
             .map(
                 cinema ->
@@ -28,6 +28,6 @@ public class CinemaFacadeImpl implements CinemaFacade {
                         .build())
             .toList();
 
-    return BaseResponse.build(list, true);
+    return BaseResponse.build(responses, true);
   }
 }

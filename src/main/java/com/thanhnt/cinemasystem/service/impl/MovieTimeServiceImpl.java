@@ -13,7 +13,7 @@ public class MovieTimeServiceImpl implements MovieTimeService {
   private final MovieTimeRepository movieTimeRepository;
 
   @Override
-  public List<MovieTime> findMovieTimeWithCinemaId(Long id) {
+  public List<MovieTime> findMovieTimeByCinemaId(Long id) {
     return movieTimeRepository.findByCinemaScreen(id);
   }
 }

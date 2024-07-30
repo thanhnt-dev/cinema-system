@@ -5,13 +5,13 @@ import com.thanhnt.cinemasystem.response.*;
 import java.util.List;
 
 public interface MovieFacade {
-  BaseResponse<List<MovieResponse>> findMovieIsShowing();
+  BaseResponse<List<MovieResponse>> getMovieIsShowing();
 
-  BaseResponse<List<MovieResponse>> findMovieIsComing();
+  BaseResponse<List<MovieResponse>> getMovieIsComing();
 
-  BaseResponse<MovieDetailResponse> findMovieById(Long id);
+  BaseResponse<MovieDetailResponse> getMovieById(Long id);
 
-  BaseResponse<List<MovieShowingCinemaResponse>> findMovieByCinemaId(Long id);
+  BaseResponse<List<MovieShowingCinemaResponse>> getMovieByCinemaId(Long id);
 
-  BaseResponse<PaginationResponse<List<MovieResponse>>> findByFilter(MovieCriteria criteria);
+  BaseResponse<PaginationResponse<List<MovieResponse>>> getByFilter(MovieCriteria criteria);
 }

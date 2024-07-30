@@ -22,21 +22,21 @@ public class MovieFacadeImpl implements MovieFacade {
   private final MovieTimeService movieTimeService;
 
   @Override
-  public BaseResponse<List<MovieResponse>> findMovieIsShowing() {
-    List<Movie> list = movieService.findMovieIsShowing();
-    List<MovieResponse> movieResponses = list.stream().map(this::buildMovieResponse).toList();
-    return BaseResponse.build(movieResponses, true);
+  public BaseResponse<List<MovieResponse>> getMovieIsShowing() {
+    List<Movie> movies = movieService.findMovieIsShowing();
+    List<MovieResponse> responses = movies.stream().map(this::buildMovieResponse).toList();
+    return BaseResponse.build(responses, true);
   }
 
   @Override
-  public BaseResponse<List<MovieResponse>> findMovieIsComing() {
-    List<Movie> list = movieService.findMovieIsComing();
-    List<MovieResponse> movieResponses = list.stream().map(this::buildMovieResponse).toList();
-    return BaseResponse.build(movieResponses, true);
+  public BaseResponse<List<MovieResponse>> getMovieIsComing() {
+    List<Movie> movies = movieService.findMovieIsComing();
+    List<MovieResponse> responses = movies.stream().map(this::buildMovieResponse).toList();
+    return BaseResponse.build(responses, true);
   }
 
   @Override
-  public BaseResponse<MovieDetailResponse> findMovieById(Long id) {
+  public BaseResponse<MovieDetailResponse> getMovieById(Long id) {
     Movie movie = movieService.findById(id);
     return BaseResponse.build(
         MovieDetailResponse.builder()
@@ -57,31 +57,35 @@ public class MovieFacadeImpl implements MovieFacade {
   }
 
   @Override
-  public BaseResponse<List<MovieShowingCinemaResponse>> findMovieByCinemaId(Long cinemaId) {
-    List<MovieTime> movieTimes = movieTimeService.findMovieTimeWithCinemaId(cinemaId);
+  public BaseResponse<List<MovieShowingCinemaResponse>> getMovieByCinemaId(Long cinemaId) {
+    List<MovieTime> movieTimes = movieTimeService.findMovieTimeByCinemaId(cinemaId);
 
     Map<Long, List<MovieTime>> moviesGrouped =
         movieTimes.stream().collect(Collectors.groupingBy(mt -> mt.getMovieTime().getId()));
 
-    List<MovieShowingCinemaResponse> response = new ArrayList<>();
+    List<MovieShowingCinemaResponse> responses = new ArrayList<>();
     for (Map.Entry<Long, List<MovieTime>> entry : moviesGrouped.entrySet()) {
       Long movieId = entry.getKey();
       List<MovieTime> times = entry.getValue();
       String movieName = times.get(0).getMovieTime().getName();
       List<Long> showtime = times.stream().map(MovieTime::getShowtime).collect(Collectors.toList());
-      response.add(new MovieShowingCinemaResponse(movieId, movieName, showtime));
+      responses.add(
+          MovieShowingCinemaResponse.builder()
+              .movieId(movieId)
+              .movieName(movieName)
+              .showtime(showtime)
+              .build());
     }
-    return BaseResponse.build(response, true);
+    return BaseResponse.build(responses, true);
   }
 
   @Override
-  public BaseResponse<PaginationResponse<List<MovieResponse>>> findByFilter(
-      MovieCriteria criteria) {
-    var result = movieService.findByFilter(criteria);
+  public BaseResponse<PaginationResponse<List<MovieResponse>>> getByFilter(MovieCriteria criteria) {
+    var movies = movieService.findByFilter(criteria);
     List<MovieResponse> movieResponses =
-        result.getContent().stream().map(this::buildMovieResponse).toList();
+        movies.getContent().stream().map(this::buildMovieResponse).toList();
     int currentPage = (criteria.getCurrentPage() == null) ? 1 : criteria.getCurrentPage();
-    return BaseResponse.build(PaginationResponse.build(movieResponses, result, currentPage), true);
+    return BaseResponse.build(PaginationResponse.build(movieResponses, movies, currentPage), true);
   }
 
   private MovieResponse buildMovieResponse(Movie movie) {
