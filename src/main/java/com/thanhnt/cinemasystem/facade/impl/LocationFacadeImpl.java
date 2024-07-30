@@ -87,6 +87,7 @@ public class LocationFacadeImpl implements LocationFacade {
   @SneakyThrows
   private void handleImportLocation(List<LocationCsvDTO> locationCsvDTOS) {
     Map<Province, Map<District, List<Ward>>> mapProvince = new HashMap<>();
+
     for (var locationcsv : locationCsvDTOS) {
       String provinceName = locationcsv.getProvinceName();
       String districtName = locationcsv.getDistrictName();
@@ -95,17 +96,20 @@ public class LocationFacadeImpl implements LocationFacade {
       if (provinceName == null || districtName == null || wardName == null) {
         continue;
       }
-      Province province = findProvinceByNameInMap(mapProvince, provinceName);
 
+      Province province = findProvinceByNameInMap(mapProvince, provinceName);
       if (province == null) {
         province = Province.builder().provinceName(provinceName).build();
         mapProvince.put(province, new HashMap<>());
       }
-      ;
 
       Map<District, List<Ward>> mapDistrict = mapProvince.get(province);
-      District district = District.builder().districtName(districtName).province(province).build();
-      mapDistrict.putIfAbsent(district, new ArrayList<>());
+      District district = findDistrictByNameInMap(mapDistrict, districtName);
+
+      if (district == null) {
+        district = District.builder().districtName(districtName).province(province).build();
+        mapDistrict.put(district, new ArrayList<>());
+      }
 
       List<Ward> wardList = mapDistrict.get(district);
       wardList.add(Ward.builder().wardName(wardName).district(district).build());
@@ -113,13 +117,14 @@ public class LocationFacadeImpl implements LocationFacade {
 
     for (Map.Entry<Province, Map<District, List<Ward>>> provinceMap : mapProvince.entrySet()) {
       Province province = provinceMap.getKey();
+      provinceService.save(province);
+
       Map<District, List<Ward>> districtListMap = provinceMap.getValue();
       for (Map.Entry<District, List<Ward>> districtMap : districtListMap.entrySet()) {
         District district = districtMap.getKey();
-        List<Ward> wards = districtMap.getValue();
-
-        provinceService.save(province);
         districtService.save(district);
+
+        List<Ward> wards = districtMap.getValue();
         for (Ward ward : wards) {
           wardService.save(Ward.builder().wardName(ward.getWardName()).district(district).build());
         }
@@ -132,6 +137,15 @@ public class LocationFacadeImpl implements LocationFacade {
     for (Province province : map.keySet()) {
       if (province.getProvinceName().equals(provinceName)) {
         return province;
+      }
+    }
+    return null;
+  }
+
+  private District findDistrictByNameInMap(Map<District, List<Ward>> map, String districtName) {
+    for (District district : map.keySet()) {
+      if (district.getDistrictName().equals(districtName)) {
+        return district;
       }
     }
     return null;

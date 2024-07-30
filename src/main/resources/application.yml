@@ -19,7 +19,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   jwt:
     secretKey: fYvFzTl5uYCVIeZCpLC3xPskvEo6QhEqKlD33mMrnVmlU5lIOIuZo7WxJL8hStjyZdmR8EwHiU7lUkl6BhDYFQ==
-    accessTokenExpirationTime: 3600000 # 1 hour
+    accessTokenExpirationTime: 1209500000 # 1 hour
     #    accessTokenExpirationTime: 30000
     refreshTokenExpirationTime: 1209600000 # 2 weeks
 

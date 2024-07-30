@@ -33,7 +33,9 @@ public class SecurityConfig {
     "/api/v1/users/confirm-otp",
     "/api/v1/users/resend-otp",
     "/api/v1/users/forgot-password",
-    "/api/v1/users/reset-password"
+    "/api/v1/users/reset-password",
+    "/api/v1/movies/**",
+    "/api/v1/cinemas/**"
   };
 
   public SecurityConfig(UserService userService, JWTService jwtService) {

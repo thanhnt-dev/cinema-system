@@ -91,6 +91,7 @@ CREATE TABLE "movies"
 (
     "id"          BIGSERIAL PRIMARY KEY NOT NULL,
     "name"        varchar(100)          NOT NULL,
+    "image"       text                  NOT NULL,
     "director"    varchar(100)          NOT NULL,
     "casts"       text                  NOT NULL,
     "premiere"    bigint                NOT NULL,

@@ -1,6 +1,5 @@
 package com.thanhnt.cinemasystem.entity;
 
-import com.thanhnt.cinemasystem.enums.Genre;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,8 +14,7 @@ import lombok.*;
 @Builder
 public class MovieGenre extends BaseEntity implements Serializable {
   @Column(name = "genre", nullable = false)
-  @Enumerated(EnumType.STRING)
-  private Genre genre;
+  private String genre;
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default
