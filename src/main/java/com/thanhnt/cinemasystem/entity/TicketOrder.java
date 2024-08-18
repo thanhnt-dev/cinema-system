@@ -19,7 +19,7 @@ public class TicketOrder extends BaseEntity implements Serializable {
   private User user;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "showtime_id", nullable = false)
+  @JoinColumn(name = "movie_showtimes", nullable = false)
   private MovieTime movieTime;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -35,5 +35,8 @@ public class TicketOrder extends BaseEntity implements Serializable {
   private Discount discount;
 
   @Column(name = "discount_amount")
-  private Long discountAmount;
+  private Float discountAmount;
+
+  @Column(name = "price")
+  private Float price;
 }

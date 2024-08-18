@@ -13,13 +13,13 @@ public interface MovieRepository
 
   @Query(
       value =
-          "select m.* from movies m where m.premiere <= EXTRACT(EPOCH FROM NOW()) * 1000 and m.is_active = true ",
+          "select m.* from movies m where m.end_date > EXTRACT(EPOCH FROM NOW()) * 1000 and m.is_active = true ",
       nativeQuery = true)
   List<Movie> findMovieIsShowing();
 
   @Query(
       value =
-          "select m.* from movies m where m.premiere > EXTRACT(EPOCH FROM NOW()) * 1000 and m.is_active = true ",
+          "select m.* from movies m where m.release_date > EXTRACT(EPOCH FROM NOW()) * 1000 and m.is_active = true ",
       nativeQuery = true)
   List<Movie> findMovieIsComing();
 }

@@ -14,6 +14,6 @@ public class MovieResponse {
   private String name;
   private String image;
   private int duration;
-  private Long premiere;
+  private Long releaseDate;
   private String genre;
 }

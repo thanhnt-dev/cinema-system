@@ -1,6 +1,5 @@
 package com.thanhnt.cinemasystem.entity;
 
-import com.thanhnt.cinemasystem.enums.Language;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,15 +28,17 @@ public class Movie extends BaseEntity implements Serializable {
   @Column(name = "casts", nullable = false)
   private String cast;
 
-  @Column(name = "premiere", nullable = false)
-  private Long premiere;
+  @Column(name = "release_date", nullable = false)
+  private Long releaseDate;
+
+  @Column(name = "end_date", nullable = false)
+  private Long end_date;
 
   @Column(name = "duration", nullable = false)
   private int duration;
 
   @Column(name = "language", nullable = false)
-  @Enumerated(EnumType.STRING)
-  private Language language;
+  private String origin;
 
   @Column(name = "age_rated", nullable = false)
   private int ageRated;

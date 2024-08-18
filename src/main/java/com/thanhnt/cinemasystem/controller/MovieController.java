@@ -53,6 +53,16 @@ public class MovieController {
     return this.movieFacade.getMovieByCinemaId(id);
   }
 
+  @GetMapping("/schedule/{movieId}")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      tags = {"MOVIE APIs"},
+      summary = "Get schedule information from movie id")
+  public BaseResponse<List<MovieScheduleResponse>> getMovieSchedule(
+      @PathVariable("movieId") Long id) {
+    return this.movieFacade.getMovieSchedule(id);
+  }
+
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   @Operation(

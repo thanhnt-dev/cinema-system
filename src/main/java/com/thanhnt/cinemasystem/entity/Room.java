@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Room extends BaseEntity implements Serializable {
   @Column(name = "room_code", nullable = false, length = 10)
-  private String room_code;
+  private String roomCode;
 
   @Column(name = "room_type", nullable = false)
   @Enumerated(EnumType.STRING)

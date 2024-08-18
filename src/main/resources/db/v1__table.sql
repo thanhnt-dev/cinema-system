@@ -89,21 +89,22 @@ CREATE TABLE "movie_genres"
 
 CREATE TABLE "movies"
 (
-    "id"          BIGSERIAL PRIMARY KEY NOT NULL,
-    "name"        varchar(100)          NOT NULL,
-    "image"       text                  NOT NULL,
-    "director"    varchar(100)          NOT NULL,
-    "casts"       text                  NOT NULL,
-    "premiere"    bigint                NOT NULL,
-    "duration"    int                   NOT NULL,
-    "language"    varchar(255)          NOT NULL,
-    "age_rated"   int                   NOT NULL,
-    "description" text,
-    "trailer"     varchar(255),
-    "genre_id"    bigint,
-    "is_active"   boolean               NOT NULL DEFAULT true,
-    "created_at"  bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
-    "updated_at"  bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
+    "id"           BIGSERIAL PRIMARY KEY NOT NULL,
+    "name"         varchar(100)          NOT NULL,
+    "image"        text                  NOT NULL,
+    "director"     varchar(100)          NOT NULL,
+    "casts"        text                  NOT NULL,
+    "release_date" bigint                NOT NULL,
+    "end_date"     bigint                NOT NULL,
+    "duration"     int                   NOT NULL,
+    "origin"     varchar(255)          NOT NULL,
+    "age_rated"    int                   NOT NULL,
+    "description"  text,
+    "trailer"      varchar(255),
+    "genre_id"     bigint,
+    "is_active"    boolean               NOT NULL DEFAULT true,
+    "created_at"   bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
+    "updated_at"   bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
 );
 
 CREATE TABLE "cinemas"
@@ -162,7 +163,8 @@ CREATE TABLE "ticket_orders"
     "seat_id"         bigint                NOT NULL,
     "is_payment"      boolean               NOT NULL DEFAULT false,
     "discount_code"   bigint,
-    "discount_amount" bigint,
+    "discount_amount" float,
+    "price"           float,
     "is_active"       boolean               NOT NULL DEFAULT true,
     "created_at"      bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
     "updated_at"      bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)

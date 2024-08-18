@@ -10,10 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-public class MovieShowingCinemaResponse {
+public class MovieScheduleResponse {
   private Long movieId;
+  private Long cinemaId;
+  private String movieName;
+  private String cinemaName;
+  private String cinemaAddress;
   private Long roomId;
   private String roomCode;
-  private String movieName;
-  private List<ShowTimeResponse> showtime;
+  private List<ShowTimeResponse> showTimeResponse;
 }

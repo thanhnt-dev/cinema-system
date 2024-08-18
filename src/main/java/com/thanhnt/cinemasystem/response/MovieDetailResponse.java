@@ -1,6 +1,5 @@
 package com.thanhnt.cinemasystem.response;
 
-import com.thanhnt.cinemasystem.enums.Language;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,9 +15,10 @@ public class MovieDetailResponse {
   private String image;
   private String director;
   private String cast;
-  private Long premiere;
+  private Long releaseDate;
+  private Long endDate;
   private int duration;
-  private Language language;
+  private String origin;
   private int ageRated;
   private String description;
   private String trailer;
