@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentRequest {
-    private Long orderId;
-    private Float amount;
+  private String orderCode;
+  private Long orderId;
+  private Float amount;
 }

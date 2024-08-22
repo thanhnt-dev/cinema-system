@@ -65,6 +65,7 @@ public class OrderFacadeImpl implements OrderFacade {
 
     orderService.saveOrder(
         TicketOrder.builder()
+            .orderCode(request.getOrderCode())
             .user(user)
             .movieTime(movieTime)
             .discount(discount)
@@ -88,6 +89,7 @@ public class OrderFacadeImpl implements OrderFacade {
             + ticketOrder.getMovieTime().getCinemaScreen().getWard().getWardName();
     return BaseResponse.build(
         OrderDetailResponse.builder()
+            .orderCode(ticketOrder.getOrderCode())
             .cinemaId(ticketOrder.getMovieTime().getCinemaScreen().getId())
             .cinemaName(ticketOrder.getMovieTime().getCinemaScreen().getCinemaName())
             .cinemaAddress(cinemaAddress)

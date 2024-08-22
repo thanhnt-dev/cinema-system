@@ -1,6 +1,7 @@
 package com.thanhnt.cinemasystem.repository;
 
 import com.thanhnt.cinemasystem.entity.TicketOrder;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +15,6 @@ public interface OrderRepository extends JpaRepository<TicketOrder, Long> {
       nativeQuery = true)
   TicketOrder findOrderBySeatIdAndShowTimeId(
       @Param("seatId") Long seatId, @Param("showtimeId") Long ShowtimeId);
+
+  Optional<TicketOrder> findByOrderCode(String orderCode);
 }

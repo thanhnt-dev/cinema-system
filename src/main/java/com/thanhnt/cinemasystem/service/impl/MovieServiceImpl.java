@@ -1,13 +1,12 @@
 package com.thanhnt.cinemasystem.service.impl;
 
 import com.thanhnt.cinemasystem.entity.Movie;
-import com.thanhnt.cinemasystem.enums.ErrorCode;
-import com.thanhnt.cinemasystem.exception.MovieException;
 import com.thanhnt.cinemasystem.repository.MovieRepository;
 import com.thanhnt.cinemasystem.request.MovieCriteria;
 import com.thanhnt.cinemasystem.service.MovieService;
 import com.thanhnt.cinemasystem.specifications.MovieSpecifications;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,10 +30,8 @@ public class MovieServiceImpl implements MovieService {
   }
 
   @Override
-  public Movie findById(Long id) {
-    return movieRepository
-        .findById(id)
-        .orElseThrow(() -> new MovieException(ErrorCode.MOVIE_NOT_FOUND));
+  public Optional<Movie> findById(Long id) {
+    return movieRepository.findById(id);
   }
 
   @Override

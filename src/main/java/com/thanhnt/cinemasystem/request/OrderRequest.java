@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class OrderRequest {
+  private String orderCode;
   private Long showtimeId;
   private Long seatId;
   private String discountCode;

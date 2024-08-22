@@ -14,6 +14,7 @@ public class OrderDetailResponse {
   private Long cinemaId;
   private String cinemaName;
   private String cinemaAddress;
+  private String orderCode;
   private Long movieId;
   private String movieName;
   private String roomCode;
