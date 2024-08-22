@@ -7,6 +7,7 @@ import com.thanhnt.cinemasystem.repository.OrderRepository;
 import com.thanhnt.cinemasystem.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,7 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
+  @Transactional
   public void saveOrder(TicketOrder order) {
     orderRepository.save(order);
   }

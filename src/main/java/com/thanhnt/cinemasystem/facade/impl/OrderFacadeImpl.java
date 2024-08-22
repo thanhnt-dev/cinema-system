@@ -58,7 +58,7 @@ public class OrderFacadeImpl implements OrderFacade {
           (isDiscountPriceMoreThanMaxDiscountPrice)
               ? discount.getMaxDiscountAmount()
               : seat.getPrice() * discount.getDiscountPercentage();
-      discount.updateQuantity();
+      discount.decreaseQuantity();
       discountService.saveDiscount(discount);
     }
     float totalPrice = seat.getPrice() - discountPrice;

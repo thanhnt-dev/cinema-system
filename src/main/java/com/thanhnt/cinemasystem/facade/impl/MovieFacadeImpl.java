@@ -74,21 +74,21 @@ public class MovieFacadeImpl implements MovieFacade {
       List<ShowTimeResponse> showtime =
           times.stream()
               .map(mt -> ShowTimeResponse.builder().id(mt.getId()).time(mt.getShowtime()).build())
-              .collect(Collectors.toList());
+              .toList();
       responses.add(
           MovieShowingCinemaResponse.builder()
               .movieId(movieId)
               .roomId(roomId)
               .roomCode(roomCode)
               .movieName(movieName)
-              .showtime(showtime)
+              .showtimes(showtime)
               .build());
     }
     return BaseResponse.build(responses, true);
   }
 
   @Override
-  public BaseResponse<List<MovieScheduleResponse>> getMovieSchedule(Long id) {
+  public BaseResponse<List<MovieScheduleResponse>> getMovieSchedules(Long id) {
     List<MovieTime> movieTimes = movieTimeService.findMovieTimeByMovieId(id);
     Map<Long, List<MovieTime>> cinemaGrouped =
         movieTimes.stream().collect(Collectors.groupingBy(mt -> mt.getCinemaScreen().getId()));
@@ -112,7 +112,7 @@ public class MovieFacadeImpl implements MovieFacade {
       List<ShowTimeResponse> showtimes =
           times.stream()
               .map(mt -> ShowTimeResponse.builder().id(mt.getId()).time(mt.getShowtime()).build())
-              .collect(Collectors.toList());
+              .toList();
 
       responses.add(
           MovieScheduleResponse.builder()

@@ -31,7 +31,7 @@ public class Discount extends BaseEntity implements Serializable {
   @Column(name = "max_discount_amount", nullable = false)
   private Long maxDiscountAmount;
 
-  public void updateQuantity() {
+  public void decreaseQuantity() {
     quantity = quantity - 1;
   }
 }

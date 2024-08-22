@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
   private final OrderFacade orderFacade;
 
-  @PostMapping()
+  @PostMapping
   @ResponseStatus(HttpStatus.OK)
   @Operation(
       tags = {"ORDERS APIs"},

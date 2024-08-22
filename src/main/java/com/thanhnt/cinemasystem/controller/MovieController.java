@@ -60,7 +60,7 @@ public class MovieController {
       summary = "Get schedule information from movie id")
   public BaseResponse<List<MovieScheduleResponse>> getMovieSchedule(
       @PathVariable("movieId") Long id) {
-    return this.movieFacade.getMovieSchedule(id);
+    return this.movieFacade.getMovieSchedules(id);
   }
 
   @GetMapping

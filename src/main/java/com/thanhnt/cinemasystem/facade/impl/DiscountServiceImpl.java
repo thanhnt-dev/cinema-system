@@ -7,6 +7,7 @@ import com.thanhnt.cinemasystem.facade.DiscountService;
 import com.thanhnt.cinemasystem.repository.DiscountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -21,6 +22,7 @@ public class DiscountServiceImpl implements DiscountService {
   }
 
   @Override
+  @Transactional
   public void saveDiscount(Discount discount) {
     discountRepository.save(discount);
   }

@@ -19,7 +19,7 @@ public class TicketOrder extends BaseEntity implements Serializable {
   private User user;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "movie_showtimes", nullable = false)
+  @JoinColumn(name = "movie_showtime", nullable = false)
   private MovieTime movieTime;
 
   @ManyToOne(fetch = FetchType.LAZY)

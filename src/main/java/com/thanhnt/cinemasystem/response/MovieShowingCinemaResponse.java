@@ -15,5 +15,5 @@ public class MovieShowingCinemaResponse {
   private Long roomId;
   private String roomCode;
   private String movieName;
-  private List<ShowTimeResponse> showtime;
+  private List<ShowTimeResponse> showtimes;
 }

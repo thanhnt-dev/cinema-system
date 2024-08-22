@@ -187,6 +187,8 @@ CREATE TABLE "payment_historys"
 (
     "id"         BIGSERIAL PRIMARY KEY NOT NULL,
     "order_id"   bigint                NOT NULL,
+    "status"     varchar,
+    "amount"     float,
     "is_active"  boolean               NOT NULL DEFAULT true,
     "created_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric),
     "updated_at" bigint                NOT NULL DEFAULT (EXTRACT(epoch FROM now()) * 1000::numeric)
