@@ -139,4 +139,37 @@ public class RestExceptionHanlder extends ResponseEntityExceptionHandler {
             false),
         HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(DiscountException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<BaseResponse<ExceptionResponse>> handleDiscountException(
+      DiscountException discountException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(discountException.getErrorCode(), discountException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(MovieTimeException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<BaseResponse<ExceptionResponse>> handleMovieTimeException(
+      MovieTimeException movieTimeException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(
+                movieTimeException.getErrorCode(), movieTimeException.getMessage()),
+            false),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(SeatException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<BaseResponse<ExceptionResponse>> handleSeatException(
+      SeatException seatException) {
+    return new ResponseEntity<>(
+        BaseResponse.build(
+            new ExceptionResponse(seatException.getErrorCode(), seatException.getMessage()), false),
+        HttpStatus.BAD_REQUEST);
+  }
 }

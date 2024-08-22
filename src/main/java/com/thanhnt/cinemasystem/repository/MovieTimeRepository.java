@@ -12,7 +12,13 @@ public interface MovieTimeRepository extends JpaRepository<MovieTime, Long> {
 
   @Query(
       value =
-          "select mt.* from movie_time mt where mt.showtime >= EXTRACT(EPOCH FROM NOW()) * 1000 and mt.cinema_id = :id ",
+          "select mt.* from movie_time mt where mt.showtime > EXTRACT(EPOCH FROM NOW()) * 1000 and mt.cinema_id = :id ",
       nativeQuery = true)
   List<MovieTime> findByCinemaScreen(@Param("id") Long id);
+
+  @Query(
+      value =
+          "select mt.* from movie_time mt where mt.showtime > EXTRACT(EPOCH FROM NOW()) * 1000 and mt.movie_id = :id ",
+      nativeQuery = true)
+  List<MovieTime> findByMovieId(@Param("id") Long id);
 }

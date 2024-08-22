@@ -2,18 +2,18 @@ package com.thanhnt.cinemasystem.enums;
 
 public enum RoomType {
   VIP,
-  TWOD,
-  THREED;
+  STANDARD,
+  PREMIUM;
 
   public boolean isVip() {
     return RoomType.VIP == this;
   }
 
-  public boolean isTwod() {
-    return RoomType.TWOD == this;
+  public boolean isStandard() {
+    return RoomType.STANDARD == this;
   }
 
-  public boolean isThreed() {
-    return RoomType.THREED == this;
+  public boolean isPremium() {
+    return RoomType.PREMIUM == this;
   }
 }

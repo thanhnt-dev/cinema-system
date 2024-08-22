@@ -48,10 +48,11 @@ public class MovieFacadeImpl implements MovieFacade {
             .name(movie.getName())
             .duration(movie.getDuration())
             .genre(movie.getGenre().getGenre())
-            .language(movie.getLanguage())
+            .origin(movie.getOrigin())
             .image(movie.getImage())
             .trailer(movie.getTrailer())
-            .premiere(movie.getPremiere())
+            .releaseDate(movie.getReleaseDate())
+            .endDate(movie.getEnd_date())
             .build(),
         true);
   }
@@ -68,12 +69,61 @@ public class MovieFacadeImpl implements MovieFacade {
       Long movieId = entry.getKey();
       List<MovieTime> times = entry.getValue();
       String movieName = times.get(0).getMovieTime().getName();
-      List<Long> showtime = times.stream().map(MovieTime::getShowtime).collect(Collectors.toList());
+      Long roomId = times.get(0).getRoomScreen().getId();
+      String roomCode = times.get(0).getRoomScreen().getRoomCode();
+      List<ShowTimeResponse> showtime =
+          times.stream()
+              .map(mt -> ShowTimeResponse.builder().id(mt.getId()).time(mt.getShowtime()).build())
+              .toList();
       responses.add(
           MovieShowingCinemaResponse.builder()
               .movieId(movieId)
+              .roomId(roomId)
+              .roomCode(roomCode)
               .movieName(movieName)
-              .showtime(showtime)
+              .showtimes(showtime)
+              .build());
+    }
+    return BaseResponse.build(responses, true);
+  }
+
+  @Override
+  public BaseResponse<List<MovieScheduleResponse>> getMovieSchedules(Long id) {
+    List<MovieTime> movieTimes = movieTimeService.findMovieTimeByMovieId(id);
+    Map<Long, List<MovieTime>> cinemaGrouped =
+        movieTimes.stream().collect(Collectors.groupingBy(mt -> mt.getCinemaScreen().getId()));
+    List<MovieScheduleResponse> responses = new ArrayList<>();
+    for (Map.Entry<Long, List<MovieTime>> entry : cinemaGrouped.entrySet()) {
+      Long cinemaId = entry.getKey();
+      List<MovieTime> times = entry.getValue();
+
+      String cinemaName = times.get(0).getCinemaScreen().getCinemaName();
+      String cinemaAddress =
+          times.get(0).getCinemaScreen().getProvince().getProvinceName()
+              + " - "
+              + times.get(0).getCinemaScreen().getDistrict().getDistrictName()
+              + " - "
+              + times.get(0).getCinemaScreen().getWard().getWardName();
+
+      String movieName = times.get(0).getMovieTime().getName();
+      Long roomId = times.get(0).getRoomScreen().getId();
+      String roomCode = times.get(0).getRoomScreen().getRoomCode();
+
+      List<ShowTimeResponse> showtimes =
+          times.stream()
+              .map(mt -> ShowTimeResponse.builder().id(mt.getId()).time(mt.getShowtime()).build())
+              .toList();
+
+      responses.add(
+          MovieScheduleResponse.builder()
+              .movieName(movieName)
+              .movieId(id)
+              .cinemaId(cinemaId)
+              .cinemaAddress(cinemaAddress)
+              .cinemaName(cinemaName)
+              .roomId(roomId)
+              .roomCode(roomCode)
+              .showTimeResponse(showtimes)
               .build());
     }
     return BaseResponse.build(responses, true);
@@ -95,7 +145,7 @@ public class MovieFacadeImpl implements MovieFacade {
         .genre(movie.getGenre().getGenre())
         .image(movie.getImage())
         .duration(movie.getDuration())
-        .premiere(movie.getPremiere())
+        .releaseDate(movie.getReleaseDate())
         .build();
   }
 }

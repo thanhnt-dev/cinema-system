@@ -13,5 +13,7 @@ public interface MovieFacade {
 
   BaseResponse<List<MovieShowingCinemaResponse>> getMovieByCinemaId(Long id);
 
+  BaseResponse<List<MovieScheduleResponse>> getMovieSchedules(Long id);
+
   BaseResponse<PaginationResponse<List<MovieResponse>>> getByFilter(MovieCriteria criteria);
 }

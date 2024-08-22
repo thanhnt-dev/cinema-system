@@ -44,12 +44,24 @@ public enum ErrorCode {
   // Token exception
   REFRESH_TOKEN_INVALID("1300", "Invalid refresh token"),
 
-  // UNAUTHORIZE
+  // UNAUTHORIZED
   API_KEY_INVALID("1350", "Invalid API key."),
 
   // Movie exception
-  MOVIE_NOT_FOUND("1400", "Movie not found");
+  MOVIE_NOT_FOUND("1400", "Movie not found."),
 
+  // Movie_time exception
+  MOVIE_TIME_NOT_FOUND("1401", "Movie time not found."),
+
+  // Seat exception
+  SEAT_HAS_BOOKED("1402", "Ticket has already been booked for this seat and showtime."),
+  SEAT_NOT_FOUND("1403", "Ticket is not found."),
+
+  // Discount exception
+  DISCOUNT_NOT_FOUND_OR_EXPIRED("1404", "Discount not found, out of quantity or expired."),
+
+  // Order exception
+  ORDER_NOT_FOUND("1405", "Order not found.");
   private final String code;
   private final String message;
 }
