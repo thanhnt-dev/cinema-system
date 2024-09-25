@@ -61,7 +61,10 @@ public enum ErrorCode {
   DISCOUNT_NOT_FOUND_OR_EXPIRED("1404", "Discount not found, out of quantity or expired."),
 
   // Order exception
-  ORDER_NOT_FOUND("1405", "Order not found.");
+  ORDER_NOT_FOUND("1405", "Order not found."),
+
+  // Movie Genre exception
+  MOVIE_GENRE_NOT_FOUNT("1406", "Movie genre not found.");
   private final String code;
   private final String message;
 }

@@ -14,4 +14,8 @@ public interface MovieService {
   Optional<Movie> findById(Long id);
 
   Page<Movie> findByFilter(MovieCriteria criteria);
+
+  void saveMovie(Movie movie);
+
+  void deactivateMovie(Long id);
 }

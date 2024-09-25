@@ -1,12 +1,17 @@
 package com.thanhnt.cinemasystem.facade.impl;
 
 import com.thanhnt.cinemasystem.entity.Movie;
+import com.thanhnt.cinemasystem.entity.MovieGenre;
 import com.thanhnt.cinemasystem.entity.MovieTime;
 import com.thanhnt.cinemasystem.enums.ErrorCode;
 import com.thanhnt.cinemasystem.exception.MovieException;
+import com.thanhnt.cinemasystem.exception.MovieGenreException;
 import com.thanhnt.cinemasystem.facade.MovieFacade;
 import com.thanhnt.cinemasystem.request.MovieCriteria;
+import com.thanhnt.cinemasystem.request.UpsertMovieRequest;
 import com.thanhnt.cinemasystem.response.*;
+import com.thanhnt.cinemasystem.service.CloudinaryService;
+import com.thanhnt.cinemasystem.service.MovieGenreService;
 import com.thanhnt.cinemasystem.service.MovieService;
 import com.thanhnt.cinemasystem.service.MovieTimeService;
 import java.util.ArrayList;
@@ -14,7 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +30,8 @@ public class MovieFacadeImpl implements MovieFacade {
 
   private final MovieService movieService;
   private final MovieTimeService movieTimeService;
+  private final MovieGenreService movieGenreService;
+  private final CloudinaryService cloudinaryService;
 
   @Override
   public BaseResponse<List<MovieResponse>> getMovieIsShowing() {
@@ -139,6 +149,79 @@ public class MovieFacadeImpl implements MovieFacade {
         movies.getContent().stream().map(this::buildMovieResponse).toList();
     int currentPage = (criteria.getCurrentPage() == null) ? 1 : criteria.getCurrentPage();
     return BaseResponse.build(PaginationResponse.build(movieResponses, movies, currentPage), true);
+  }
+
+  @SneakyThrows
+  @Override
+  @Transactional
+  public BaseResponse<Void> createMovie(UpsertMovieRequest request) {
+    String imageMovie =
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/832px-No-Image-Placeholder.svg.png";
+    MovieGenre movieGenre =
+        movieGenreService
+            .findById(request.getGenre())
+            .orElseThrow(() -> new MovieGenreException(ErrorCode.MOVIE_GENRE_NOT_FOUNT));
+    Movie movie =
+        Movie.builder()
+            .name(request.getName())
+            .image(imageMovie)
+            .cast(request.getCast())
+            .director(request.getDirector())
+            .releaseDate(request.getReleaseDate())
+            .end_date(request.getEndDate())
+            .duration(request.getDuration())
+            .description(request.getDescription())
+            .origin(request.getLanguage())
+            .trailer(request.getTrailer())
+            .ageRated(request.getAge())
+            .genre(movieGenre)
+            .build();
+
+    movieService.saveMovie(movie);
+    return BaseResponse.ok();
+  }
+
+  @Override
+  @Transactional
+  public BaseResponse<Void> updateMovie(UpsertMovieRequest request) {
+    Movie movie =
+        movieService
+            .findById(request.getId())
+            .orElseThrow(() -> new MovieException(ErrorCode.MOVIE_NOT_FOUND));
+    movie.updateInfo(
+        request.getName(),
+        request.getDirector(),
+        request.getCast(),
+        request.getReleaseDate(),
+        request.getEndDate(),
+        request.getDuration(),
+        request.getLanguage(),
+        request.getAge(),
+        request.getDescription(),
+        request.getTrailer());
+    movieService.saveMovie(movie);
+    return BaseResponse.ok();
+  }
+
+  @Override
+  @SneakyThrows
+  @Transactional
+  public BaseResponse<Void> upsertImage(Long id, MultipartFile image) {
+    Movie movie =
+        movieService.findById(id).orElseThrow(() -> new MovieException(ErrorCode.MOVIE_NOT_FOUND));
+    String imageMovie = cloudinaryService.uploadImage(image.getBytes());
+    movie.upsertImage(imageMovie);
+    movieService.saveMovie(movie);
+    return BaseResponse.ok();
+  }
+
+  @Override
+  @Transactional
+  public BaseResponse<Void> deleteMovie(Long id) {
+    Movie movie =
+        movieService.findById(id).orElseThrow(() -> new MovieException(ErrorCode.MOVIE_NOT_FOUND));
+    movieService.deactivateMovie(movie.getId());
+    return BaseResponse.ok();
   }
 
   private MovieResponse buildMovieResponse(Movie movie) {

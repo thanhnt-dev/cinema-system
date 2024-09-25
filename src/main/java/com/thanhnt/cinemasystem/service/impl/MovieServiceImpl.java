@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,5 +47,17 @@ public class MovieServiceImpl implements MovieService {
     }
 
     return movieRepository.findAll(specification, pageable);
+  }
+
+  @Override
+  @Transactional
+  public void saveMovie(Movie movie) {
+    movieRepository.save(movie);
+  }
+
+  @Override
+  @Transactional
+  public void deactivateMovie(Long id) {
+    movieRepository.deactivateMovieById(id);
   }
 }
