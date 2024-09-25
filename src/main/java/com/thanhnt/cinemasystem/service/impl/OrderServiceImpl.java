@@ -5,6 +5,7 @@ import com.thanhnt.cinemasystem.enums.ErrorCode;
 import com.thanhnt.cinemasystem.exception.OrderException;
 import com.thanhnt.cinemasystem.repository.OrderRepository;
 import com.thanhnt.cinemasystem.service.OrderService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,11 @@ public class OrderServiceImpl implements OrderService {
     return orderRepository
         .findById(id)
         .orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
+  }
+
+  @Override
+  public Optional<TicketOrder> findByOrderCode(String orderCode) {
+    return orderRepository.findByOrderCode(orderCode);
   }
 
   @Override

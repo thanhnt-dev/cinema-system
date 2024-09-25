@@ -2,6 +2,8 @@ package com.thanhnt.cinemasystem.facade.impl;
 
 import com.thanhnt.cinemasystem.entity.Movie;
 import com.thanhnt.cinemasystem.entity.MovieTime;
+import com.thanhnt.cinemasystem.enums.ErrorCode;
+import com.thanhnt.cinemasystem.exception.MovieException;
 import com.thanhnt.cinemasystem.facade.MovieFacade;
 import com.thanhnt.cinemasystem.request.MovieCriteria;
 import com.thanhnt.cinemasystem.response.*;
@@ -37,7 +39,8 @@ public class MovieFacadeImpl implements MovieFacade {
 
   @Override
   public BaseResponse<MovieDetailResponse> getMovieById(Long id) {
-    Movie movie = movieService.findById(id);
+    Movie movie =
+        movieService.findById(id).orElseThrow(() -> new MovieException(ErrorCode.MOVIE_NOT_FOUND));
     return BaseResponse.build(
         MovieDetailResponse.builder()
             .id(movie.getId())

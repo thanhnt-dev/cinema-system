@@ -97,7 +97,7 @@ CREATE TABLE "movies"
     "release_date" bigint                NOT NULL,
     "end_date"     bigint                NOT NULL,
     "duration"     int                   NOT NULL,
-    "origin"     varchar(255)          NOT NULL,
+    "origin"       varchar(255)          NOT NULL,
     "age_rated"    int                   NOT NULL,
     "description"  text,
     "trailer"      varchar(255),
@@ -158,6 +158,7 @@ CREATE TABLE "movie_time"
 CREATE TABLE "ticket_orders"
 (
     "id"              BIGSERIAL PRIMARY KEY NOT NULL,
+    "order_code"      varchar(50) UNIQUE    NOT NULL,
     "user_id"         bigint                NOT NULL,
     "movie_showtimes" bigint                NOT NULL,
     "seat_id"         bigint                NOT NULL,

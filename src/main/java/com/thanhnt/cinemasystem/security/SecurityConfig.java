@@ -35,7 +35,8 @@ public class SecurityConfig {
     "/api/v1/users/forgot-password",
     "/api/v1/users/reset-password",
     "/api/v1/movies/**",
-    "/api/v1/cinemas/**"
+    "/api/v1/cinemas/**",
+    "/api/v1/payment/vnpay-success"
   };
 
   public SecurityConfig(UserService userService, JWTService jwtService) {
